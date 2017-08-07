@@ -139,6 +139,7 @@ namespace BarcodeConversion
             {
                 string msg  = "Issue occured while attempting to populate jobs dropdown. Contact system admin." + Environment.NewLine + ex.Message;
                 System.Windows.Forms.MessageBox.Show(msg, "39");
+                return new Dictionary<int, string>();
             }
         }
 
