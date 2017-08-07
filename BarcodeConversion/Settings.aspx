@@ -8,13 +8,14 @@
     </script>
     <asp:Panel ID="SettingsPanel" Visible="false" runat="server">
         <div style="margin-top:45px; margin-bottom:40px; height:50px; border-bottom:solid 1px green;width:899px;">
-            <table>
+            <table style="width:899px;">
                 <tr>
                     <td><h2 style="display:inline; padding-top:25px;">Settings</h2></td>
-                    <td> 
+                    <td style="text-align:right;"> 
                         <%-- COLLAPSE ALL--%>
                         <div style="display:block;margin-left:710px;padding-top:5px;">
-                            <asp:Button ID="collapseAll" Visible="true" Width="87px" runat="server" Text="Collapse All" OnClick="collapseAll_Click"/>
+                            <asp:ImageButton ID="collapseIcon" ImageUrl="Content/collapse_all.png" Width="30" Height="20" BackColor="White" Visible="true" runat="server" OnClick="collapseAll_Click" />
+                            <%--<asp:Button ID="collapseAll" Visible="false" Width="87px" runat="server" Text="Collapse All" OnClick="collapseAll_Click"/> --%>
                         </div>
                     </td>
                 </tr>
@@ -231,7 +232,7 @@
                                 <td><asp:Label runat="server">
                                     <h4 >&nbsp;Create Form Controls for Jobs</h4></asp:Label></td>
                                 <td style="text-align:right;padding-right:5px;"><asp:Button Text="?" Height="23" 
-                                    OnClientClick="return alert('Notes:\n*  Only jobs configured here can be processed by operators.\n*  Red colored dropdown jobs are jobs that are already configured.')" runat="server"></asp:Button></td>
+                                    OnClientClick="return alert('Notes:\n*  Only jobs configured here can be processed by operators.\n*  Red colored dropdown jobs are Configured jobs.')" runat="server"></asp:Button></td>
                             </tr>
                         </table>
                         <table class = table style="width:320px;">

@@ -129,6 +129,8 @@
   <ItemGroup>
     <Content Include="Content\calendar-blue.css" />
     <Content Include="Content\calender.png" />
+    <Content Include="Content\hide_all.png" />
+    <Content Include="Content\collapse_all.png" />
     <Content Include="Indexes.aspx" />
     <Content Include="IndexStatus.aspx" />
     <Content Include="Scripts\calendar-en.min.js" />

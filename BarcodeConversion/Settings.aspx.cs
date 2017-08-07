@@ -1204,9 +1204,9 @@ namespace BarcodeConversion
             {   
                 try
                 {
-                    if (collapseAll.Text == "Collapse All")
+                    if (collapseIcon.ImageUrl == "Content/collapse_all.png")
                     {
-                        collapseAll.Text = "Hide All";
+                        collapseIcon.ImageUrl = "Content/hide_all.png";
                         jobSection.Visible = true;
                         newUserSection.Visible = true;
                         getUnassignedJobs(null);
@@ -1219,7 +1219,7 @@ namespace BarcodeConversion
                     }
                     else
                     {
-                        collapseAll.Text = "Collapse All";
+                        collapseIcon.ImageUrl = "Content/collapse_all.png";
                         jobSection.Visible = false;
                         newUserSection.Visible = false;
                         assignPanel.Visible = false;
@@ -1229,8 +1229,8 @@ namespace BarcodeConversion
                 }
                 catch (Exception ex)
                 {
-                    string msg = "Issue occured while attempting to hile or collapse all sections." + Environment.NewLine + ex.Message;
-                    System.Windows.Forms.MessageBox.Show(msg, "79");
+                    string msg = "Issue occured while attempting to hile or collapse all sections. Contacy system admin." + Environment.NewLine + ex.Message;
+                    System.Windows.Forms.MessageBox.Show(msg, "Error 79");
                 }
             }
 
