@@ -520,7 +520,7 @@ namespace BarcodeConversion
             }
             catch (Exception ex)
             {
-                string msg  = "Issue occured while attempting to get unprinted indexes. Contact system admin." + Environment.NewLine + ex.Message);
+                string msg  = "Issue occured while attempting to get unprinted indexes. Contact system admin." + Environment.NewLine + ex.Message;
                 System.Windows.Forms.MessageBox.Show(msg, "32");
             }
         }
@@ -626,6 +626,7 @@ namespace BarcodeConversion
             {
                 string msg  = "Issue occured while attempting to sort column. Contact system admin.." + Environment.NewLine + ex.Message;
                 System.Windows.Forms.MessageBox.Show(msg, "36");
+                return "ASC";
             }
         }
     }
