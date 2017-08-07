@@ -7,8 +7,6 @@ namespace BarcodeConversion
 {
     public partial class SiteMaster : MasterPage
     {
-        SqlConnection con = Helper.ConnectionObj;
-
         protected void Page_Load(object sender, EventArgs e)
         {
             // SHOW 'SETTINGS' BUTTON IF ADMIN. IF NEW, SAVE USER.
@@ -16,50 +14,49 @@ namespace BarcodeConversion
             try
             {
                 string user = Environment.UserName;
-                if (user != null)
-                {   
-                    // If user exists, get Admin status
-                    con.Open();
-                    SqlCommand cmd = new SqlCommand("SELECT ADMIN FROM OPERATOR WHERE NAME = @user", con);
-                    cmd.Parameters.AddWithValue("@user", user);
-                    SqlDataReader reader = cmd.ExecuteReader();
-                    if (reader.HasRows)
+                if (user != null) 
+                {
+                    using (SqlConnection con = Helper.ConnectionObj)
                     {
-                        while (reader.Read())
+                        using (SqlCommand cmd = con.CreateCommand())
                         {
-                            isAdmin = (bool)reader.GetValue(0);
+                            // If user exists, get Admin status
+                            cmd.CommandText = "SELECT ADMIN FROM OPERATOR WHERE NAME = @user";
+                            cmd.Parameters.AddWithValue("@user", user);
+                            con.Open();
+                            object result = cmd.ExecuteScalar();
+                            if (result != null)
+                                isAdmin = (bool)cmd.ExecuteScalar();
+                            else 
+                            {
+                                // If user doesn't exist, register user and set Admin status to Operator.
+                                using (SqlCommand cmd2 = con.CreateCommand()) 
+                                {
+                                    cmd2.CommandText = "INSERT INTO OPERATOR (NAME, ADMIN) VALUES(@user,@admin)";
+                                    cmd2.Parameters.AddWithValue("@user", user);
+                                    cmd2.Parameters.AddWithValue("@admin", 0);
+                                    try
+                                    {
+                                        cmd2.ExecuteNonQuery();
+                                    }
+                                    catch (SqlException ex)
+                                    {
+                                        string msg = "Error-34: Issue occured trying to save operator. Please contact system admin!";
+                                        Page.ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + Environment.NewLine
+                                        + ex.Message + "')", true);
+                                    }
+                                }
+                            }
                         }
-                        reader.Close();
-                        con.Close();
                     }
-                    else
-                    {
-                        reader.Close();
-
-                        // If user doesn't exist, register user and set Admin status to operator.
-                        string msg;
-                        SqlCommand cmd2 = new SqlCommand("INSERT INTO OPERATOR (NAME, ADMIN) VALUES(@user,@admin)", con);
-                        cmd2.Parameters.AddWithValue("@user", user);
-                        cmd2.Parameters.AddWithValue("@admin", 0);
-
-                        if (cmd2.ExecuteNonQuery() != 1)
-                        {
-                            //TBD
-                            msg = "Error: Failed trying to identify this computer. Please contact system admin!";
-                            Page.ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "')", true);
-                        }
-                    }                 
-                    con.Close();
                 }
             }
             catch (Exception ex)
             {
-                //string msg = "You've not been found into our system. Contact the system admin.";
-                Page.ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('Error: Something went wrong while attempting to identify this computer. Please contact your system admin.');", true);
+                string msg = "Error-35: Issue occured while attempting to identify this computer. Please contact your system admin.";
+                Page.ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('"+ msg + Environment.NewLine + ex.Message + "');", true);
             }
             if (isAdmin) settings.Visible = true;
-
         }
-
     }
 }

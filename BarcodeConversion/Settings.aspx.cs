@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Diagnostics;
 using System.Data;
 using BarcodeConversion.App_Code;
 
@@ -14,137 +10,211 @@ namespace BarcodeConversion
     public partial class Contact : Page
     {
         protected void Page_Load(object sender, EventArgs e)
-        {
-            if (!Page.IsPostBack) jobAbb.Focus();
-            setDropdownColor();
-            getDropdownJobItems();
-            success.Visible = false;
+        {   
+             try
+            {
+                if (!Page.IsPostBack) jobAbb.Focus();
+                if (userStatus() == "True")
+                {
+                    SettingsPanel.Visible = true;
+                }
+                else if (userStatus() == "False")
+                {
+                    SettingsPanel.Visible = false;
+                    Response.Redirect("~/");
+                    return;
+                }
+                else if (userStatus() == "Failed")
+                {
+                    return;
+                }
+                else if (userStatus() == "Not Found")
+                {
+                    string msg = "Operator not Found.";
+                    System.Windows.Forms.MessageBox.Show(msg);
+                    return;
+                }
+              
+                setDropdownColor();
+                getDropdownJobItems();
+                success.Visible = false;
+            }
+            catch (Exception ex)
+            {
+                string msg = "Issue occured while attempting to load page. Contact system admin." + Environment.NewLine + ex.Message;
+                System.Windows.Forms.MessageBox.Show(msg, "Error 50");
+                return;
+            }
         }
 
-        // 'CHOOSE YOUR ACTION' SELECTED
+
+
+        // CHECK WHETHER USER IS ADMIN
+        private string userStatus() 
+        {
+            string user = Environment.UserName;
+            using (SqlConnection con = Helper.ConnectionObj) 
+            {
+                using (SqlCommand cmd = con.CreateCommand()) 
+                {
+                    cmd.CommandText = "SELECT ADMIN FROM OPERATOR WHERE NAME=@userName";
+                    cmd.Parameters.AddWithValue("@userName", user);
+                    try 
+                    {
+                        con.Open();
+                        object result = cmd.ExecuteScalar();
+                        if (result != null)
+                            return result.ToString();
+                        else return "Not Found";
+                    }
+                    catch (Exception ex)
+                    {
+                        string msg = "Issue occured while attempting to identify operator status. Contact system admin." + Environment.NewLine + ex.Message ;
+                        System.Windows.Forms.MessageBox.Show(msg, "Error 51");
+                        return "Failed";
+                    }
+                }
+            }
+        }
+
+
+
+        // 'CHOOSE YOUR ACTION' DROPDOWN: CHOOSE TO CREATE/EDIT JOB
         protected void actionChange(object sender, EventArgs e)
-        {
-
-            if (selectAction.SelectedValue == "edit")
+        {   
+            try
             {
-                // Fill dropdown list with jobs.
-                selectJobList.Items.Clear();
-                selectJobList.Items.Add("Select");
-                getDropdownJobItems();
-                jobAbb.Visible = false;
-                createJobBtn.Visible = false;
-                deleteJobBtn.Visible = false;
-                selectJobList.Visible = true;
-                editJobBtn.Visible = true;
-                jobNameLabel.Visible = true;
-                jobName.Visible = true;
-                jobName.Attributes["placeholder"] = " Optional";
-                jobActiveLabel.Visible = true;
-                jobActiveBtn.Visible = true;
+                if (selectAction.SelectedValue == "edit")
+                {
+                    // Fill dropdown list with jobs.
+                    selectJobList.Items.Clear();
+                    selectJobList.Items.Add("Select");
+                    getDropdownJobItems();
+                    jobAbb.Visible = false;
+                    createJobBtn.Visible = false;
+                    deleteJobBtn.Visible = false;
+                    selectJobList.Visible = true;
+                    editJobBtn.Visible = true;
+                    jobNameLabel.Visible = true;
+                    jobName.Visible = true;
+                    jobName.Attributes["placeholder"] = " Optional";
+                    jobActiveLabel.Visible = true;
+                    jobActiveBtn.Visible = true;
+                }
+                else if (selectAction.SelectedValue == "create")
+                {
+                    jobSectionDefault();
+                }
+                else
+                {
+                    editJobBtn.Visible = false;
+                    jobAbb.Visible = false;
+                    createJobBtn.Visible = false;
+                    jobNameLabel.Visible = false;
+                    jobName.Visible = false;
+                    jobActiveLabel.Visible = false;
+                    jobActiveBtn.Visible = false;
+                    jobAssignedToLabel.Visible = false;
+                    jobAssignedTo.Visible = false;
+                    selectJobList.Visible = true;
+                    deleteJobBtn.Visible = true;
+                    getDropdownJobItems();
+                }
             }
-            else if (selectAction.SelectedValue == "create")
+            catch (Exception ex)
             {
-                jobSectionDefault();
-            }
-            else
-            {
-                editJobBtn.Visible = false;
-                jobAbb.Visible = false;
-                createJobBtn.Visible = false;
-                jobNameLabel.Visible = false;
-                jobName.Visible = false;
-                jobActiveLabel.Visible = false;
-                jobActiveBtn.Visible = false;
-                jobAssignedToLabel.Visible = false;
-                jobAssignedTo.Visible = false;
-                selectJobList.Visible = true;
-                deleteJobBtn.Visible = true;
-                getDropdownJobItems();
+                string msg  = "Issue occured while attempting to choose action. Contact system admin. " + Environment.NewLine + ex.Message;
+                System.Windows.Forms.MessageBox.Show(msg, "52");    
             }
         }
-
 
 
 
         // 'CREATE' CLICKED: CREATE NEW JOB. FUNCTION
         protected void createJob_Click(object sender, EventArgs e)
-        {
-            if (!Page.IsValid) return;
-            SqlConnection con = Helper.ConnectionObj;
-            con.Open();
-
-            if (this.jobAbb.Text == string.Empty)
+        {   
+            try
             {
-                string msg = "Job abbreviation is required!";
-                ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "');", true);
-                jobAbb.Text = string.Empty;
-                jobAbb.Focus();
-                con.Close();
-                return;
-            }
-            else if (this.jobName.Text == string.Empty)
-            {
-                string warning2 = "Job name is required!";
-                ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + warning2 + "');", true);
-                jobName.Text = string.Empty;
-                jobName.Focus();
-                con.Close();
-                return;
-            }
-            else
-            {
-                try
+                if (!Page.IsValid) return;
+                if (this.jobAbb.Text == string.Empty)
                 {
-                    // Save created job
-                    SqlCommand cmd = new SqlCommand("INSERT INTO JOB (ABBREVIATION, NAME, ACTIVE) VALUES(@abbr, @name, @active)", con);
-                    cmd.Parameters.AddWithValue("@abbr", this.jobAbb.Text);
-                    cmd.Parameters.AddWithValue("@name", this.jobName.Text);
-                    cmd.Parameters.AddWithValue("@active", this.jobActiveBtn.SelectedValue);
-                    if (cmd.ExecuteNonQuery() == 1)
-                    {
-                        // Assign job to assignee
-                        if (jobAssignedTo.Text != string.Empty)
-                        {
-                            string assignee = jobAssignedTo.Text;
-                            string abbr = jobAbb.Text;
-                            bool answer = AssignJob(assignee, abbr, con); // calling assignJob function
-                            if (answer == true)
-                            {
-                                string msg = "New job successfully saved & assigned!";
-                                ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "');", true);
-                                jobFormClear();
-                            }
-                            else
-                            {
-                                string msg = "New job successfully saved, but not assigned! Contact tech support.";
-                                ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "');", true);
-                                jobFormClear();
-                            }
-                        }
-                        else
-                        {
-                            success.Text = "New Job Created!";
-                            success.Visible = true;
-                            ClientScript.RegisterStartupScript(this.GetType(), "fadeoutOp", "FadeOut3();", true);
-                            jobFormClear();
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    string msg = "This Job may already exists. Duplicates are not allowed.";
+                    string msg = "Job abbreviation is required!";
                     ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "');", true);
-                    Console.WriteLine(ex.Message);
-                    con.Close();
-                    jobFormClear();
+                    jobAbb.Text = string.Empty;
+                    jobAbb.Focus();
                     return;
                 }
+                else if (this.jobName.Text == string.Empty)
+                {
+                    string warning2 = "Job name is required!";
+                    ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + warning2 + "');", true);
+                    jobName.Text = string.Empty;
+                    jobName.Focus();
+                    return;
+                }
+                else
+                {
+                    try
+                    {
+                        using(SqlConnection con = Helper.ConnectionObj) 
+                        {
+                            // Save created job
+                            using (SqlCommand cmd = con.CreateCommand()) 
+                            {
+                                cmd.CommandText = "INSERT INTO JOB (ABBREVIATION, NAME, ACTIVE) VALUES(@abbr, @name, @active)";
+                                cmd.Parameters.AddWithValue("@abbr", this.jobAbb.Text);
+                                cmd.Parameters.AddWithValue("@name", this.jobName.Text);
+                                cmd.Parameters.AddWithValue("@active", this.jobActiveBtn.SelectedValue);
+                                con.Open();
+                                if (cmd.ExecuteNonQuery() == 1)
+                                {
+                                    // Assign job to assignee
+                                    if (jobAssignedTo.Text != string.Empty)
+                                    {
+                                        string assignee = jobAssignedTo.Text;
+                                        string abbr = jobAbb.Text;
+                                        bool answer = AssignJob(assignee, abbr, con); // calling assignJob function
+                                        if (answer == true)
+                                        {
+                                            string msg = "New job successfully saved & assigned!";
+                                            ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "');", true);
+                                            jobFormClear();
+                                        }
+                                        else
+                                        {
+                                            string msg = "Error 53: New job successfully saved, but not assigned! Contact system admin.";
+                                            ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "');", true);
+                                            jobFormClear();
+                                        }
+                                    }
+                                    else
+                                    {
+                                        success.Text = "New Job Created!";
+                                        success.Visible = true;
+                                        ClientScript.RegisterStartupScript(this.GetType(), "fadeoutOp", "FadeOut3();", true);
+                                        jobFormClear();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        jobFormClear();
+                        string msg  = "Issue occured while attempting to save the created job. Contact system admin." + Environment.NewLine + ex.Message;
+                        System.Windows.Forms.MessageBox.Show(msg, "54");
+                    }
+                }
             }
-            con.Close();
+            catch (Exception ex)
+            {
+                string msg  = "Issue occured while attempting to save the created job. Contact system admin." + Environment.NewLine + ex.Message;
+                System.Windows.Forms.MessageBox.Show(msg, "55");
+            }
         }
 
 
-
+        // --------------------------------------------------------------------------------------------------------
         // 'EDIT' CLICKED: EDIT JOB NAME OR ACTIVE STATUS. FUNCTION
         protected void editJob_Click(object sender, EventArgs e)
         {
@@ -222,9 +292,8 @@ namespace BarcodeConversion
             }
             catch(Exception ex)
             {
-                string msg = "Error: Something happened while attempting to update the job ACTIVE";
-                ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "');", true);
-                Console.WriteLine(ex.Message);
+                string msg  = "Issue occured while attempting to update the job ACTIVE status. Contact system admin." + Environment.NewLine + ex.Message;
+                System.Windows.Forms.MessageBox.Show(msg, "56");    
             }
         }
 
@@ -353,7 +422,6 @@ namespace BarcodeConversion
         protected void setPermissions_Click(object sender, EventArgs e)
         {
             if (!Page.IsValid) return;
-
             try
             {
                 if (user.Text != null)
@@ -390,7 +458,7 @@ namespace BarcodeConversion
                         }
                         else
                         {
-                            msg = "Failed to set operator permissions!";
+                            msg = "Error 57: Failed to set operator permissions. Contact system admin.";
                             Page.ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "')", true);
                             con.Close();
                             permissionsFormClear();
@@ -406,10 +474,9 @@ namespace BarcodeConversion
                 }
             }
             catch (Exception ex)
-            {
-                string msg = "Error: Something went wrong while attempting to set permissions. Contact your system admin.";
-                ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "');", true);
-                Console.WriteLine(ex.Message);
+            {   
+                string msg  = "Issue occured while attempting to set permissions. Contact system admin." + Environment.NewLine + ex.Message;
+                System.Windows.Forms.MessageBox.Show(msg, "58");
             }
         }
 
@@ -417,19 +484,27 @@ namespace BarcodeConversion
 
         // CHECKBOX THAT SETS ALL THE OTHERS. HELPER FUNCTION
         protected void selectAll_changed(object sender, EventArgs e)
-        {
-            CheckBox ChkBoxHeader = (CheckBox)jobAccessGridView.HeaderRow.FindControl("selectAll");
-            foreach (GridViewRow row in jobAccessGridView.Rows)
+        {   
+            try
             {
-                CheckBox ChkBoxRows = (CheckBox)row.FindControl("cbSelect");
-                if (ChkBoxHeader.Checked == true)
+                CheckBox ChkBoxHeader = (CheckBox)jobAccessGridView.HeaderRow.FindControl("selectAll");
+                foreach (GridViewRow row in jobAccessGridView.Rows)
                 {
-                    ChkBoxRows.Checked = true;
+                    CheckBox ChkBoxRows = (CheckBox)row.FindControl("cbSelect");
+                    if (ChkBoxHeader.Checked == true)
+                    {
+                        ChkBoxRows.Checked = true;
+                    }
+                    else
+                    {
+                        ChkBoxRows.Checked = false;
+                    }
                 }
-                else
-                {
-                    ChkBoxRows.Checked = false;
-                }
+            }
+            catch (Exception ex)
+            {   
+                string msg  = "Issue occured while processing master CheckBox. Contact system admin." + Environment.NewLine + ex.Message;
+                System.Windows.Forms.MessageBox.Show(msg, "59");
             }
         }
 
@@ -437,15 +512,23 @@ namespace BarcodeConversion
 
         // CLEAR JOB FORM. HELPER FUNCTION
         private void jobFormClear()
-        {
-            jobAbb.Text = string.Empty;
-            selectJobList.SelectedValue = "Select";
-            jobName.Text = string.Empty;
-            jobActiveBtn.SelectedValue = "1";
-            jobAssignedTo.Text = string.Empty;
-            jobAssignedToLabel.Visible = true;
-            jobAssignedTo.Visible = true;
-            jobAbb.Focus();
+        {   
+            try
+            {
+                jobAbb.Text = string.Empty;
+                selectJobList.SelectedValue = "Select";
+                jobName.Text = string.Empty;
+                jobActiveBtn.SelectedValue = "1";
+                jobAssignedTo.Text = string.Empty;
+                jobAssignedToLabel.Visible = true;
+                jobAssignedTo.Visible = true;
+                jobAbb.Focus();
+            }
+            catch (Exception ex)
+            {   
+                string msg  = "Issue occured while attempting to clear fields. Contact system admin." + Environment.NewLine + ex.Message;
+                System.Windows.Forms.MessageBox.Show(msg, "60");
+            }
         }
 
 
@@ -463,17 +546,25 @@ namespace BarcodeConversion
         // HIDE/COLLAPSE JOB SECTION. FUNCTION
         protected void newJobShow_Click(object sender, EventArgs e)
         {
-            if (jobSection.Visible == false)
-            {
-                jobSection.Visible = true;
-                line.Visible = true;
-                jobSectionDefault();
+           try
+           {
+                if (jobSection.Visible == false)
+                {
+                    jobSection.Visible = true;
+                    line.Visible = true;
+                    jobSectionDefault();
+                }
+                else
+                {
+                    jobSection.Visible = false;
+                    if (newUserSection.Visible == false) line.Visible = false;
+                }
             }
-            else
-            {
-                jobSection.Visible = false;
-                if (newUserSection.Visible == false) line.Visible = false;
-            }
+           catch (Exception ex)
+           {
+                string msg  = "Issue occured while attempting to hide or collapse panel. Contact system admin." + Environment.NewLine + ex.Message;
+                System.Windows.Forms.MessageBox.Show(msg, "61");
+           }
         }
 
 
@@ -497,146 +588,170 @@ namespace BarcodeConversion
 
         // 'JOB ACCESS SECTION' CLICKED: HIDE/SHOW JOB-ACCESS SECTION & PULL InnaccessibleED JOBS
         protected void assignShow_Click(object sender, EventArgs e)
-        {
-            if (assignPanel.Visible == false)
+        {   
+            try
             {
-                Page.Validate();
-                assignPanel.Visible = true;
-                assignee.Text = string.Empty;
-                assignee.Focus();
-                // Get all unassigned jobs
-                getUnassignedJobs(null);
+                if (assignPanel.Visible == false)
+                {
+                    Page.Validate();
+                    assignPanel.Visible = true;
+                    assignee.Text = string.Empty;
+                    assignee.Focus();
+                    // Get all unassigned jobs
+                    getUnassignedJobs(null);
+                }
+                else
+                {
+                    assignPanel.Visible = false;
+                }
             }
-            else
+            catch (Exception ex)
             {
-                assignPanel.Visible = false;
+                string msg  = "Issue occured while attempting to hide or show panel. Contac system admin." + Environment.NewLine + ex.Message;
+                System.Windows.Forms.MessageBox.Show(msg, "62");
             }
         }
-
 
 
         
         // 'ACCESSIBLE' CLICKED: GET OP'S ACCESSIBLE JOBS. FUNCTION
         protected void assignedJob_Click(object sender, EventArgs e)
         {
-            SqlConnection con = Helper.ConnectionObj;
-            con.Open();
-            if(assignee.Text == string.Empty)
+            try
             {
-                string msg = "Operator field is required!";
-                ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "');", true);
-                assignee.Focus();
-                con.Close();
-                return; 
-            }
-            else
-            {
-                // If operator field not empty, get operator ID, then jobs
-                int opID = 0;
-                SqlCommand cmd = new SqlCommand("SELECT ID FROM OPERATOR WHERE NAME = @name", con);
-                cmd.Parameters.AddWithValue("@name", assignee.Text);
-                SqlDataReader reader = cmd.ExecuteReader();
-                if (reader.HasRows) // If operator exists
+                SqlConnection con = Helper.ConnectionObj;
+                con.Open();
+                if (assignee.Text == string.Empty)
                 {
-                    while (reader.Read())
-                    {
-                        opID = (int)reader.GetValue(0);
-                    }
-                    reader.Close();
-                    jobsLabel.Text = "Operator's Currently Accessible Jobs";
-                    // Get operator assigned jobs
-                    jobAccessBtn.Visible = false;
-                    SqlCommand cmd2 = null;
-                    SqlDataAdapter da = null;
-                    DataSet ds = null;
-                    try
-                    {
-                        //if (!Page.IsValid) return;
-
-                        cmd2 = new SqlCommand("SELECT ABBREVIATION " +
-                                             "FROM JOB " +
-                                             "INNER JOIN OPERATOR_ACCESS ON JOB.ID = OPERATOR_ACCESS.JOB_ID " +
-                                             "WHERE ACTIVE = 1 AND OPERATOR_ACCESS.OPERATOR_ID = @ID", con);
-                        cmd2.Parameters.AddWithValue("@ID", opID);
-                        da = new SqlDataAdapter(cmd2);
-                        ds = new DataSet();
-                        da.Fill(ds);
-                        if (ds.Tables.Count > 0)
-                        {
-                            jobAccessGridView.DataSource = ds.Tables[0];
-                            //indexesGridView.AllowPaging = true;
-                            jobAccessGridView.DataBind();
-                            jobAccessGridView.Visible = true;
-                            assignee.Focus();
-                        }
-                        con.Close();
-
-                        // Handling of whether any JOB was returned from DB
-                        if (jobAccessGridView.Rows.Count == 0)
-                        {
-                            jobAccessGridView.Visible = false;
-                            jobAccessBtn.Visible = false;
-                            deleteAssignedBtn.Visible = false;
-                            jobsLabel.Text = "No Accessible Jobs Found.";
-                            assignee.Focus();
-                        }
-                        else
-                        {
-                            jobAccessBtn.Visible = false;
-                            deleteAssignedBtn.Visible = true;
-                            assignee.Focus();
-                        }
-                    }
-                    catch (SqlException ex)
-                    {
-                        ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + ex.Message + "');", true);
-                    }
-                    catch (Exception ex)
-                    {
-                        ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + ex.Message + "');", true);
-                    }
-                    finally
-                    {
-                        if (da != null)
-                        {
-                            da.Dispose();
-                        }
-                        if (cmd != null)
-                        {
-                            cmd.Dispose();
-                        }
-                        if (con != null)
-                        {
-                            con.Dispose();
-                        }
-                    }
+                    string msg = "Operator field is required!";
+                    ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "');", true);
+                    assignee.Focus();
+                    con.Close();
+                    return;
                 }
                 else
                 {
-                    reader.Close();
-                    string msg = "Operator name could not be found!";
-                    ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "');", true);
-                    assignee.Focus();
-                }
-            }
-            
-        }
+                    // If operator field not empty, get operator ID, then jobs
+                    int opID = 0;
+                    SqlCommand cmd = new SqlCommand("SELECT ID FROM OPERATOR WHERE NAME = @name", con);
+                    cmd.Parameters.AddWithValue("@name", assignee.Text);
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    if (reader.HasRows) // If operator exists
+                    {
+                        while (reader.Read())
+                        {
+                            opID = (int)reader.GetValue(0);
+                        }
+                        reader.Close();
+                        jobsLabel.Text = "Operator's Currently Accessible Jobs";
+                        // Get operator assigned jobs
+                        jobAccessBtn.Visible = false;
+                        SqlCommand cmd2 = null;
+                        SqlDataAdapter da = null;
+                        DataSet ds = null;
+                        try
+                        {
+                            //if (!Page.IsValid) return;
 
+                            cmd2 = new SqlCommand("SELECT ABBREVIATION " +
+                                                    "FROM JOB " +
+                                                    "INNER JOIN OPERATOR_ACCESS ON JOB.ID = OPERATOR_ACCESS.JOB_ID " +
+                                                    "WHERE ACTIVE = 1 AND OPERATOR_ACCESS.OPERATOR_ID = @ID", con);
+                            cmd2.Parameters.AddWithValue("@ID", opID);
+                            da = new SqlDataAdapter(cmd2);
+                            ds = new DataSet();
+                            da.Fill(ds);
+                            if (ds.Tables.Count > 0)
+                            {
+                                jobAccessGridView.DataSource = ds.Tables[0];
+                                //indexesGridView.AllowPaging = true;
+                                jobAccessGridView.DataBind();
+                                jobAccessGridView.Visible = true;
+                                assignee.Focus();
+                            }
+                            con.Close();
+
+                            // Handling of whether any JOB was returned from DB
+                            if (jobAccessGridView.Rows.Count == 0)
+                            {
+                                jobAccessGridView.Visible = false;
+                                jobAccessBtn.Visible = false;
+                                deleteAssignedBtn.Visible = false;
+                                jobsLabel.Text = "No Accessible Jobs Found.";
+                                assignee.Focus();
+                            }
+                            else
+                            {
+                                jobAccessBtn.Visible = false;
+                                deleteAssignedBtn.Visible = true;
+                                assignee.Focus();
+                            }
+                        }
+                        catch (SqlException ex)
+                        {
+                            string msg = "Issue occured while attempting to get operator's accessible jobs. Contact system admin." + Environment.NewLine + ex.Message;
+                            System.Windows.Forms.MessageBox.Show(msg, "63");
+                        }
+                        catch (Exception ex)
+                        {
+                            string msg = "Issue occured while attempting to get operator's accessible jobs. Contact system admin." + Environment.NewLine + ex.Message;
+                            System.Windows.Forms.MessageBox.Show(msg, "64");
+                        }
+                        finally
+                        {
+                            if (da != null)
+                            {
+                                da.Dispose();
+                            }
+                            if (cmd != null)
+                            {
+                                cmd.Dispose();
+                            }
+                            if (con != null)
+                            {
+                                con.Dispose();
+                            }
+                        }
+                    }
+                    else
+                    {
+                        reader.Close();
+                        string msg = "Operator name could not be found!";
+                        ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "');", true);
+                        assignee.Focus();
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                string msg  = "Issue occured while attempting to get operator's accessible jobs. Contact system admin." + Environment.NewLine + ex.Message;
+                System.Windows.Forms.MessageBox.Show(msg, "65");
+            }
+        }
         
 
 
-        // 'UNASSIGNED' CLICKED: GET ALL JOBS. FUNCTION
+        // 'ALL JOBS' CLICKED: GET ALL JOBS. FUNCTION
         protected void unassignedJob_Click(object sender, EventArgs e)
-        {
-            getUnassignedJobs(sender);
-            assignee.Focus();
+        {   
+            try
+            {
+                getUnassignedJobs(sender);
+                assignee.Focus();
+            }
+            catch (Exception ex)
+            {
+                string msg  = "Issue occured while attempting to retrieve all jobs. Contact system admin." + Environment.NewLine + ex.Message;
+                System.Windows.Forms.MessageBox.Show(msg, "66");
+            }
         }
 
 
 
         // 'DENY' CLICKED: REMOVE OPERATOR ACCESS TO JOBS. FUNCTION
         protected void deleteAssigned_Click(object sender, EventArgs e)
-        {
+        {   
             SqlConnection con = Helper.ConnectionObj;
             con.Open();
             if (assignee.Text == string.Empty)
@@ -678,9 +793,8 @@ namespace BarcodeConversion
                 }
                 catch (Exception ex)
                 {
-                    string msg = "Error: Something went wrong while attempting to retrieve operator's ID. Contact your system admin.";
-                    ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "');", true);
-                    Console.WriteLine(ex.Message);
+                    string msg  = "Issue occured while attempting to retrieve operator's ID. Contact system admin." + Environment.NewLine + ex.Message;
+                    System.Windows.Forms.MessageBox.Show(msg, "67");
                 }
 
                 // For each selected job, remove access.
@@ -705,7 +819,7 @@ namespace BarcodeConversion
                             }
                             else
                             {
-                                string msg = "Assigned job " + row.Cells[2].Text + " could not be found!";
+                                string msg = "Error 68: Selected job " + row.Cells[2].Text + " could not be found. Contact system admin.";
                                 ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "');", true);
                                 assignee.Focus();
                                 con.Close();
@@ -715,9 +829,8 @@ namespace BarcodeConversion
                         }
                         catch (Exception ex)
                         {
-                            string msg = "Error: Something went wrong while attempting to deny operator's accessibility to jobs";
-                            ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "');", true);
-                            Console.WriteLine(ex.Message);
+                            string msg  = "Issue occured while attempting to identify selected job(s). Contact system admin." + Environment.NewLine + ex.Message;
+                            System.Windows.Forms.MessageBox.Show(msg, "69");
                         }
 
                         try
@@ -732,7 +845,7 @@ namespace BarcodeConversion
                             }
                             else
                             {
-                                string msg = "Job: " + row.Cells[2].Text + " could not be removed! Please try again or contact Tech Support";
+                                string msg = "Error 70: Job: " + row.Cells[2].Text + " could not be removed. Contact system admin.";
                                 ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "');", true);
                                 con.Close();
                                 assignedJob_Click(new object(), new EventArgs());
@@ -742,9 +855,8 @@ namespace BarcodeConversion
                         }
                         catch (Exception ex)
                         {
-                            string msg = "Error: Something went wrong while attempting to deny operator's accessibility to jobs";
-                            ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "');", true);
-                            Console.WriteLine(ex.Message);
+                            string msg  = "Issue occured while attempting todeny operator's accessibility to jobs. Contact system admin." + Environment.NewLine + ex.Message;
+                            System.Windows.Forms.MessageBox.Show(msg, "71");
                         }
                     }
                     if (count == 0)
@@ -756,7 +868,7 @@ namespace BarcodeConversion
                     }
                     else
                     {
-                        string msg = count + " Job(s) Unassigned!";
+                        string msg = count + " Job(s) denied!";
                         ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "');", true);
                         assignee.Focus();
                         con.Close();
@@ -770,81 +882,97 @@ namespace BarcodeConversion
 
         // 'GRANT' CLICKED: ASSIGN OPERATORS JOB-ACCESSES. FUNCTION
         protected void jobAccess_Click(object sender, EventArgs e)
-        {
-            SqlConnection con = Helper.ConnectionObj;
-            con.Open();
+        {   
+            try
+            {
+                SqlConnection con = Helper.ConnectionObj;
+                con.Open();
 
-            string assigneeName = assignee.Text;
-            if (assigneeName == string.Empty)
-            {
-                string msg = "Operator field is required!";
-                ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "');", true);
-                assignee.Focus();
-                return;
-            }
-            else
-            {
-                if (jobAccessGridView.Rows.Count > 0)
+                string assigneeName = assignee.Text;
+                if (assigneeName == string.Empty)
                 {
-                    int count = 0;
-                    // For each checked job, assign job to assignee
-                    foreach (GridViewRow row in jobAccessGridView.Rows)
-                    {
-                        CheckBox chxBox = row.FindControl("cbSelect") as CheckBox;
-                        if (chxBox.Checked)
-                        {
-                            string abbr = row.Cells[2].Text;
-                            bool answer = AssignJob(assigneeName, abbr, con); // calling assignJob function
-                            if (answer == true)
-                            {
-                                count++;
-                            }
-                            else
-                            {
-                                //assignee.Focus();
-                                //getUnassignedJobs();
-                            }
-                        }
-                    }
-                    if (count == 0)
-                    {
-                        string msg = "Please make sure that at least 1 job is selected.";
-                        ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "');", true);
-                        return;
-                    }
-                    else
-                    {
-                        string msg = count + " job(s) successfully assigned.";
-                        ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "');", true);
-                        getUnassignedJobs(null);
-                        assignee.Focus();
-                        return;
-                    }
+                    string msg = "Operator field is required!";
+                    ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "');", true);
+                    assignee.Focus();
+                    return;
                 }
                 else
                 {
-                    string msg = "No Unassigned job record could be found.";
-                    ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "');", true);
-                    return;
+                    if (jobAccessGridView.Rows.Count > 0)
+                    {
+                        int count = 0;
+                        // For each checked job, assign job to assignee
+                        foreach (GridViewRow row in jobAccessGridView.Rows)
+                        {
+                            CheckBox chxBox = row.FindControl("cbSelect") as CheckBox;
+                            if (chxBox.Checked)
+                            {
+                                string abbr = row.Cells[2].Text;
+                                bool answer = AssignJob(assigneeName, abbr, con); // calling assignJob function
+                                if (answer == true)
+                                {
+                                    count++;
+                                }
+                                else
+                                {
+                                    //assignee.Focus();
+                                    //getUnassignedJobs();
+                                }
+                            }
+                        }
+                        if (count == 0)
+                        {
+                            string msg = "Please make sure that at least 1 job is selected.";
+                            ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "');", true);
+                            return;
+                        }
+                        else
+                        {
+                            string msg = count + " job(s) accessibility granted.";
+                            ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "');", true);
+                            getUnassignedJobs(null);
+                            assignee.Focus();
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        string msg = "There are no jobs to be granted.";
+                        ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "');", true);
+                        return;
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                string msg  = "Issue occured while attempting to grant jobs accessibility to operator. Contact system admin." + Environment.NewLine + ex.Message;
+                System.Windows.Forms.MessageBox.Show(msg, "72");
             }
         }
 
 
         // 'JOB INDEX CONFIGURATION SECTION' CLICKED: SHOW & INDEX FORM CONTROLS. FUNCTION
         protected void jobIndexEditingShow_Click(object sender, EventArgs e)
-        {
-            // Fill Job Abb. dropdown list with jobs.
-            selectJob.Items.Clear();
-            selectJob.Items.Add("Select");
-            if (jobIndexEditingPanel.Visible == false)
+        {   
+            try
             {
-                jobIndexEditingPanel.Visible = true;
-                getActiveJobs();
+                // Fill Job Abb. dropdown list with jobs.
+                selectJob.Items.Clear();
+                selectJob.Items.Add("Select");
+                if (jobIndexEditingPanel.Visible == false)
+                {
+                    jobIndexEditingPanel.Visible = true;
+                    getActiveJobs();
+                }
+                else
+                {
+                    jobIndexEditingPanel.Visible = false;
+                }
             }
-            else
+            catch (Exception ex)
             {
-                jobIndexEditingPanel.Visible = false;
+                string msg  = "Issue occured while attempting to show or hide section. Contact system admin." + Environment.NewLine + ex.Message;
+                System.Windows.Forms.MessageBox.Show(msg, "73");
             }
         }
 
@@ -901,7 +1029,8 @@ namespace BarcodeConversion
             }
             else
             {   
-                try {
+                try 
+                {
                     // First, get job ID of selected job
                     SqlCommand cmd = new SqlCommand("SELECT ID FROM JOB WHERE ABBREVIATION = @jobAbb", con);
                     cmd.Parameters.AddWithValue("@jobAbb", selectJob.SelectedValue);
@@ -923,10 +1052,10 @@ namespace BarcodeConversion
                         return;
                     }
                 }
-                catch(Exception ex) {
-                    string msg = "Error: something went wrong while attempting to retrieve ID of the selected job. Contact system admin.";
-                    ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "');", true);
-                    Console.WriteLine(ex.Message);
+                catch(Exception ex) 
+                {
+                    string msg  = "Issue occured while attempting to retrieve ID of the selected job. Contact system admin." + Environment.NewLine + ex.Message;
+                    System.Windows.Forms.MessageBox.Show(msg, "74");
                 }
                 
 
@@ -974,12 +1103,12 @@ namespace BarcodeConversion
                         con.Close();
                     }
                 }
-                catch(SqlException ex) {
+                catch(SqlException ex) 
+                {
                     clearRules();
                     con.Close();
-                    string msg = " The job selected has already been configured. If you want to reconfigure, please Unset then Set again!";
-                    ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "');", true);
-                    Console.WriteLine(ex.Message);
+                    string msg  = "The job selected has already been configured. If you want to reconfigure, please Unset then Set again!" + Environment.NewLine + ex.Message;
+                    System.Windows.Forms.MessageBox.Show(msg, "75");
                 }
             }
         }
@@ -1027,10 +1156,10 @@ namespace BarcodeConversion
                         return;
                     }
                 }
-                catch(Exception ex) {
-                    string msg = "Error: something went wrong while attempting to retrieve ID of the selected job. Contact system admin.";
-                    ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "');", true);
-                    Console.WriteLine(ex.Message);
+                catch(Exception ex) 
+                {
+                    string msg  = "Issue occured while attempting to retrieve ID of the selected job. Contact system admin." + Environment.NewLine + ex.Message;
+                    System.Windows.Forms.MessageBox.Show(msg, "76");
                 }
                 
 
@@ -1051,7 +1180,7 @@ namespace BarcodeConversion
                     }
                     else
                     {
-                        string msg = "Config could not be unset. Please contact system admin.";
+                        string msg = "Error 77: Something went wrong while attempting to unset. Please contact system admin.";
                         ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "');", true);
                         clearRules();
                         con.Close();
@@ -1061,8 +1190,8 @@ namespace BarcodeConversion
                 {
                     clearRules();
                     con.Close();
-                    string msg = "Configuration rules for the selected job has already been unset. If you want to reconfigure, Make sure it is selected, then Set!";
-                    ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "');", true);
+                    string msg  = "Configuration rules for the selected job has already been unset. If you want to reconfigure, Make sure it is selected, then Set!" + Environment.NewLine + ex.Message;
+                    System.Windows.Forms.MessageBox.Show(msg, "78");
                 }
             }
         }
@@ -1072,34 +1201,42 @@ namespace BarcodeConversion
 
             // COLLAPSE ALL SECTIONS. HELPER FUNCTION 
             protected void collapseAll_Click(object sender, EventArgs e)
-            {
-                if (collapseAll.Text == "Collapse All")
+            {   
+                try
                 {
-                    collapseAll.Text = "Hide All";
-                    jobSection.Visible = true;
-                    newUserSection.Visible = true;
-                    getUnassignedJobs(null);
-                    assignPanel.Visible = true;
-                    jobIndexEditingPanel.Visible = true;
-                    getDropdownJobItems();
-                    getActiveJobs();
-                    jobSectionDefault();
-                    line.Visible = true;
+                    if (collapseAll.Text == "Collapse All")
+                    {
+                        collapseAll.Text = "Hide All";
+                        jobSection.Visible = true;
+                        newUserSection.Visible = true;
+                        getUnassignedJobs(null);
+                        assignPanel.Visible = true;
+                        jobIndexEditingPanel.Visible = true;
+                        getDropdownJobItems();
+                        getActiveJobs();
+                        jobSectionDefault();
+                        line.Visible = true;
+                    }
+                    else
+                    {
+                        collapseAll.Text = "Collapse All";
+                        jobSection.Visible = false;
+                        newUserSection.Visible = false;
+                        assignPanel.Visible = false;
+                        jobIndexEditingPanel.Visible = false;
+                        line.Visible = false;
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    collapseAll.Text = "Collapse All";
-                    jobSection.Visible = false;
-                    newUserSection.Visible = false;
-                    assignPanel.Visible = false;
-                    jobIndexEditingPanel.Visible = false;
-                    line.Visible = false;
+                    string msg = "Issue occured while attempting to hile or collapse all sections." + Environment.NewLine + ex.Message;
+                    System.Windows.Forms.MessageBox.Show(msg, "79");
                 }
             }
 
 
 
-        // GET ALL UNASSIGNED JOBS OR OPERATOR'S INACCESSIBLE JOBS. HELPER FUNCTION
+        // GET ALL JOBS OR OPERATOR'S INACCESSIBLE JOBS. HELPER FUNCTION
         private void getUnassignedJobs(Object sender)
         {
             SqlCommand cmd = null;
@@ -1149,14 +1286,12 @@ namespace BarcodeConversion
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.Message);
-                    string msg = "Error: An error occured. Contact system admin .";
-                    ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "');", true);
+                    string msg = "Issue occured while attempting to retrieve operator's ID. Contact system admin." + Environment.NewLine + ex.Message;
+                    System.Windows.Forms.MessageBox.Show(msg, "80");
                     con.Close();
                     return;
                 }
             }
-
 
             try
             {
@@ -1171,9 +1306,9 @@ namespace BarcodeConversion
                 else
                 {
                     cmd = new SqlCommand("SELECT ABBREVIATION " +
-                                         "FROM JOB " +
-                                         "LEFT JOIN OPERATOR_ACCESS ON JOB.ID = OPERATOR_ACCESS.JOB_ID " +
-                                         "WHERE JOB.ACTIVE = 1 AND OPERATOR_ACCESS.JOB_ID IS NULL", con);
+                                         "FROM JOB", con); 
+                 //                        "LEFT JOIN OPERATOR_ACCESS ON JOB.ID = OPERATOR_ACCESS.JOB_ID " +
+                 //                        "WHERE JOB.ACTIVE = 1 AND OPERATOR_ACCESS.JOB_ID IS NULL", con);
                 }
 
                 da = new SqlDataAdapter(cmd);
@@ -1194,13 +1329,13 @@ namespace BarcodeConversion
                     jobAccessBtn.Visible = false;
                     deleteAssignedBtn.Visible = false;
                     if (buttonId == "inaccessibleBtn") jobsLabel.Text = "No Inaccessible Jobs Found.";
-                    else jobsLabel.Text = "No Unassigned Jobs Found.";
+                    else jobsLabel.Text = "No Jobs Found.";
                     jobsLabel.Visible = true;
                 }
                 else
                 {
                     if (buttonId == "inaccessibleBtn") jobsLabel.Text = "Operator's Currently Inaccessible Jobs.";
-                    else jobsLabel.Text = "Jobs Currently Inaccessible to Anyone.";
+                    else jobsLabel.Text = "All Jobs.";
                     jobsLabel.Visible = true;
                     jobAccessBtn.Visible = true;
                     deleteAssignedBtn.Visible = false;
@@ -1208,11 +1343,13 @@ namespace BarcodeConversion
             }
             catch (SqlException ex)
             {
-                ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + ex.Message + "');", true);
+                string msg = "Issue occured while attempting to retrieve jobs. Contact system admin." + Environment.NewLine + ex.Message;
+                System.Windows.Forms.MessageBox.Show(msg, "91");
             }
             catch (Exception ex)
             {
-                ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + ex.Message + "');", true);
+                string msg = "Issue occured while attempting to retrieve jobs. Contact system admin. " + Environment.NewLine + ex.Message;
+                System.Windows.Forms.MessageBox.Show(msg, "92");
             }
             finally
             {
@@ -1239,8 +1376,8 @@ namespace BarcodeConversion
             selectJobList.Items.Clear();
             selectJobList.Items.Add("Select");
 
-            try {
-
+            try 
+            {
                 SqlConnection con = Helper.ConnectionObj;
                 SqlCommand cmd = new SqlCommand("SELECT ABBREVIATION, ACTIVE FROM JOB", con);
                 con.Open();
@@ -1280,12 +1417,10 @@ namespace BarcodeConversion
                 con.Close();
             }
             catch(Exception ex) {
-                string msg = " Error: Something went wrong while attempting to retrieve jobs from database. Contact system admin.";
-                ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "');", true);
-                Console.WriteLine(ex.Message);
+                string msg = "Issue occured while attempting to retrieve jobs. Contact system admin. " + Environment.NewLine + ex.Message;
+                System.Windows.Forms.MessageBox.Show(msg, "93");
             }
         }
-
 
 
 
@@ -1295,7 +1430,8 @@ namespace BarcodeConversion
             selectJob.Items.Clear();
             selectJob.Items.Add("Select");
 
-            try {
+            try 
+            {
                 SqlConnection con = Helper.ConnectionObj;
                 SqlCommand cmd = new SqlCommand("SELECT ABBREVIATION FROM JOB WHERE ACTIVE = 1", con);
                 con.Open();
@@ -1323,10 +1459,10 @@ namespace BarcodeConversion
                 con.Close();
                 setDropdownColor();
             }
-            catch(Exception ex) {
-                string msg = "Some went wront while getting active jobs";
-                ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "');", true);
-                Console.WriteLine(ex.Message);
+            catch(Exception ex) 
+            {
+                string msg = "Issue occured while attempting to retrieve active jobs. Contact system admin. " + Environment.NewLine + ex.Message;
+                System.Windows.Forms.MessageBox.Show(msg, "94");
             }
         }
 
@@ -1338,7 +1474,8 @@ namespace BarcodeConversion
             int jobID = 0;
             if (con.State == ConnectionState.Closed) con.Open();
 
-            try {
+            try 
+            {
                 // First check if the assignee exists. If so, get ID.
                 SqlCommand cmd2 = new SqlCommand("SELECT ID FROM OPERATOR WHERE NAME = @assignedTo", con);
                 cmd2.Parameters.AddWithValue("@assignedTo", assignee);
@@ -1359,13 +1496,14 @@ namespace BarcodeConversion
                     return false;
                 }
             }
-            catch(Exception ex) {
-                string msg = "Job(s) not assigned. Specified operator could not be found! Contact system admin.";
-                ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "');", true);
-                Console.WriteLine(ex.Message);
+            catch(Exception ex) 
+            {
+                string msg = "Issue occured while attempting to retrieve operator ID. Contact system admin. " + Environment.NewLine + ex.Message;
+                System.Windows.Forms.MessageBox.Show(msg, "95");
             }
             
-            try {
+            try 
+            {
                 // Get job ID
                 SqlCommand cmd3 = new SqlCommand("SELECT ID FROM JOB WHERE ABBREVIATION = @abbr", con);
                 cmd3.Parameters.AddWithValue("@abbr", abbr);
@@ -1378,25 +1516,19 @@ namespace BarcodeConversion
                     }
                     reader2.Close();
                 }
-                else
-                {
-                    string msg = "Job(s) not assigned. The specified Job abbreviation could not be found.";
-                    Page.ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "')", true);
-                    con.Close();
-                    return false;
-                }
             }
-            catch(Exception ex) {
-                string msg = "Job(s) not assigned. The specified Job abbreviation could not be found. Contact system adim";
-                Page.ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "')", true);
-                Console.WriteLine(ex.Message);
+            catch(Exception ex) 
+            {
+                string msg = "Issue occured while attempting to retrieve job ID. Contact system admin. " + Environment.NewLine + ex.Message;
+                System.Windows.Forms.MessageBox.Show(msg, "96");
             }
            
 
             // Save assignee ID & new job ID in DB
             if (opID > 0 && jobID > 0)
             {
-                try {
+                try 
+                {
                     SqlCommand cmd4 = new SqlCommand("INSERT INTO OPERATOR_ACCESS (OPERATOR_ID, JOB_ID) VALUES(@opId, @jobID)", con);
                     cmd4.Parameters.AddWithValue("@opID", opID);
                     cmd4.Parameters.AddWithValue("@jobID", jobID);
@@ -1413,10 +1545,10 @@ namespace BarcodeConversion
                         return false;
                     }
                 }
-                catch(Exception ex) {
-                    string msg = "Error: Job(s) NOT saved nor assigned. Try again or contact system admin.";
-                    ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "');", true);
-                    Console.WriteLine(ex.Message);
+                catch(Exception ex) 
+                {
+                    string msg = "Issue occured while attempting to grant job accessiblity to specified operator. Contact system admin. " + Environment.NewLine + ex.Message;
+                    System.Windows.Forms.MessageBox.Show(msg, "97");
                 }
             }
             return false;
@@ -1426,49 +1558,65 @@ namespace BarcodeConversion
 
         // SET COLOR FOR DROPDOWN CONFIGURED JOB ITEMS. HELPER FUNCTION
         private void setDropdownColor()
-        {
-            SqlConnection con = Helper.ConnectionObj;
-            con.Open();
-            SqlCommand cmd4 = new SqlCommand("SELECT ABBREVIATION " +
-                                             "FROM JOB " +
-                                             "INNER JOIN JOB_CONFIG_INDEX ON JOB.ID = JOB_CONFIG_INDEX.JOB_ID " +
-                                             "WHERE JOB.ACTIVE = 1", con);
-            SqlDataReader reader4 = cmd4.ExecuteReader();
-            if (reader4.HasRows)
+        {   
+            try
             {
-                while (reader4.Read())
+                SqlConnection con = Helper.ConnectionObj;
+                con.Open();
+                SqlCommand cmd4 = new SqlCommand("SELECT ABBREVIATION " +
+                                                 "FROM JOB " +
+                                                 "INNER JOIN JOB_CONFIG_INDEX ON JOB.ID = JOB_CONFIG_INDEX.JOB_ID " +
+                                                 "WHERE JOB.ACTIVE = 1", con);
+                SqlDataReader reader4 = cmd4.ExecuteReader();
+                if (reader4.HasRows)
                 {
-                    // Red config job items from 'JOB INDEX CONFIG' section
-                    foreach (ListItem item in selectJob.Items)
+                    while (reader4.Read())
                     {
-                        if (item.Value == (string)reader4.GetValue(0))
+                        // Red config job items from 'JOB INDEX CONFIG' section
+                        foreach (ListItem item in selectJob.Items)
                         {
-                            item.Attributes.Add("style", "color:Red;");
+                            if (item.Value == (string)reader4.GetValue(0))
+                            {
+                                item.Attributes.Add("style", "color:Red;");
+                            }
                         }
                     }
+                    reader4.Close();
+                    con.Close();
                 }
-                reader4.Close();
                 con.Close();
             }
-            con.Close();
+            catch (Exception ex)
+            {
+                string msg = "Issue occured while attempting to color appropriate jobs. Contact system admin. " + Environment.NewLine + ex.Message;
+                System.Windows.Forms.MessageBox.Show(msg, "98");
+            }
+            
         }
 
 
 
         // HANDLE NEXT PAGE CLICK. FUNCTION
         protected void pageChange_Click(object sender, GridViewPageEventArgs e)
-        {
-            jobAccessGridView.PageIndex = e.NewPageIndex;
-            if (jobsLabel.Text == "Operator's Currently Accessible Jobs")
+        {   
+            try
             {
-                assignedJob_Click(new object(), new EventArgs());
+                jobAccessGridView.PageIndex = e.NewPageIndex;
+                if (jobsLabel.Text == "Operator's Currently Accessible Jobs")
+                {
+                    assignedJob_Click(new object(), new EventArgs());
+                }
+                else
+                {
+                    getUnassignedJobs(null);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                getUnassignedJobs(null);
+                string msg = "Issue occured while attempting to operator's ID. Contact system admin. " + Environment.NewLine + ex.Message;
+                System.Windows.Forms.MessageBox.Show(msg, "99");
             }
         }
-
 
 
 

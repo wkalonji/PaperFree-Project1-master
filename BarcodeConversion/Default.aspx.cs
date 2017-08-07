@@ -25,13 +25,13 @@ namespace BarcodeConversion
         }
 
 
-
-        // 'JOB ABBREVIATION' DROPDOWN CLICKED: SET & DISPLAY CONTROLS OF SELECTED JOB. 
+        // 'JOB ABBREVIATION' DROPDOWN: SET & DISPLAY CONTROLS OF SELECTED JOB. 
         protected void onJobSelect(object sender, EventArgs e)
         {
             try
             {
                 // Set stage
+                indexSavedMsg.Visible = false;
                 generateIndexSection.Visible = false;
                 indexCreationSection.Visible = false;
                 LABEL1.Visible = false;
@@ -58,8 +58,8 @@ namespace BarcodeConversion
 
                     if (jobID == 0)
                     {
-                        string msg = "Error-02: Selected job not found. Contact system admin.";
-                        ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "');", true);
+                        string msg = "Selected job not found. Contact system admin.";
+                        System.Windows.Forms.MessageBox.Show(msg, "Error 02");
                         selectJob.SelectedValue = "Select";
                         return;
                     }
@@ -125,11 +125,13 @@ namespace BarcodeConversion
                                             label5Box.Visible = true;
                                         }
                                     }
+                                    generateIndexSection.Visible = true;
                                 }
                                 else
                                 {
-                                    string msg = "The " + selectJob.SelectedValue + " job that you selected has not yet been configured by your system admin. Only red colored jobs can be processed.";
-                                    ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "');", true);
+                                    string msg = "The " + selectJob.SelectedValue + " job that you selected has not yet been configured by your system admin." 
+                                                + "Only red colored jobs can be processed.";
+                                    System.Windows.Forms.MessageBox.Show(msg);
                                     selectJob.SelectedValue = "Select";
                                     return;
                                 }
@@ -140,14 +142,14 @@ namespace BarcodeConversion
             }
             catch (Exception ex)
             {
-                throw new Exception("Error-03: Issue occured while attempting to retrieve selected job's form controls. Contact system admin." +
-                                    System.Environment.NewLine + "Default.onJobSelect()- " + ex.Message);
+                string msg = "Issue occured while attempting to retrieve selected job's form controls. Contact system admin." + Environment.NewLine + ex.Message;
+                System.Windows.Forms.MessageBox.Show(msg, "Error 04");
             }
         }      
 
 
         // 'GENERATE INDEX' CLICKED: GENERATE INDEX AND BARCODE FROM FORM DATA.
-        protected void btnGenerateBarcode_Click(object sender, EventArgs e)
+        private void generateBarcode()
         {
             try
             {
@@ -176,21 +178,17 @@ namespace BarcodeConversion
                     // Making the Index string 
                     ViewState["allEntriesConcat"] = selectJob.SelectedValue.ToUpper() + year + julianDay + time;
                 }
-                var showTextValue = chkShowText.Checked ? "1" : "0";
                 string indexString = (string)ViewState["allEntriesConcat"];
-                textToConvert.Text = indexString.ToUpper();
                 indexSavedMsg.Visible = false;
                 generateIndexSection.Visible = true;
 
                 // Convert index to barcode
-                imgBarcode.ImageUrl = string.Format("ShowCode39Barcode.ashx?code={0}&ShowText={1}&Thickness={2}",
-                                                    indexString,
-                                                    showTextValue, 1);
+                // imgBarcode.ImageUrl = string.Format("ShowCode39Barcode.ashx?code={0}&ShowText={1}&Thickness={2}",indexString,showTextValue, 1);
             }
             catch (Exception ex)
             {
-                throw new Exception("Error-04: Issue occured while attempting to generate Index. Contact system admin." + 
-                                    System.Environment.NewLine + "Default.btnGenerateBarcode()- " + ex.Message);
+                string msg = "Issue occured while attempting to generate Index. Contact system admin." + Environment.NewLine + ex.Message;
+                System.Windows.Forms.MessageBox.Show(msg, "Error 04");
             }
         }
 
@@ -203,12 +201,13 @@ namespace BarcodeConversion
 
             try
             {
+                generateBarcode();
                 // First, get current user id via name.
                 string user = Environment.UserName;
                 int opID = Helper.getUserId(user);
                 if (opID == 0)
                 {
-                    string msg = "Error-05: Couldn't identify this computer. Contact system admin.";
+                    string msg = "Error 05: Couldn't identify this computer. Contact system admin.";
                     ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "');", true);
                     return;
                 }
@@ -217,7 +216,7 @@ namespace BarcodeConversion
                 int jobID = getJobId(this.selectJob.SelectedValue);
                 if (jobID == 0)
                 {
-                    string msg = "Error-06: Couldn't identify the selected job. Contact system admin.";
+                    string msg = "Error 06: Couldn't identify the selected job. Contact system admin.";
                     ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "');", true);
                     selectJob.SelectedValue = "Select";
                     return;
@@ -252,7 +251,6 @@ namespace BarcodeConversion
                             indexSavedMsg.Visible = true;
                             ClientScript.RegisterStartupScript(this.GetType(), "fadeoutOperation", "FadeOut();", true);
                             clearFields();
-                            generateIndexSection.Visible = false;
                         }
                         else
                         {
@@ -266,12 +264,13 @@ namespace BarcodeConversion
             {
                 if (ex.Message.Contains("Violation of UNIQUE KEY"))
                 {
-                    throw new Exception("Error-08: The Index you are trying to save already exists! Click 'Generate Index' button to generate a new index.");
+                    string msg = "Error 08: The Index you are trying to save already exists! Click 'Generate Index' button to generate a new index.";
+                    ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "');", true);
                 }
                 else
                 {
-                    throw new Exception("Error-09: Issue occured while attempting to save index. Contact system admin." +
-                                        System.Environment.NewLine + "Default.saveIndex()- " + ex.Message);
+                    string msg = "Issue occured while attempting to save index. Contact system admin." + Environment.NewLine + ex.Message;
+                    System.Windows.Forms.MessageBox.Show(msg, "Error 09");
                 }
             }
         }
@@ -288,6 +287,7 @@ namespace BarcodeConversion
                 // Clear page
                 formPanel.Visible = false;
                 indexSavedMsg.Visible = false;
+                Image imgBarcode = new Image();
 
                 // Write Index sheet page content
                 string indexString = (string)ViewState["allEntriesConcat"];
@@ -336,8 +336,8 @@ namespace BarcodeConversion
             }
             catch (Exception ex)
             {
-                throw new Exception("Error-10: Issue occured while attempting to setup the printing job. Contact system admin." +
-                                     System.Environment.NewLine + "Default.saveAndPrint()- " + ex.Message);
+                string msg = "Issue occured while attempting to setup the printing job. Contact system admin." + Environment.NewLine + ex.Message;
+                System.Windows.Forms.MessageBox.Show(msg, "Error 10");
             }     
         }
 
@@ -368,7 +368,7 @@ namespace BarcodeConversion
                         }
                         else
                         {
-                            string msg = "Error-11: Index saved, but issue occured while attempting to set it to PRINTED. Contact system admin.";
+                            string msg = "Error 11: Index saved, but issue occured while attempting to set it to PRINTED. Contact system admin.";
                             ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "');", true);
                         }
 
@@ -379,7 +379,7 @@ namespace BarcodeConversion
                         }
                         else
                         {
-                            string msg = "Error-12: Index saved, but issue occured while attempting to set it to PRINTED. Contact system admin.";
+                            string msg = "Error 12: Index saved, but issue occured while attempting to set it to PRINTED. Contact system admin.";
                             ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "');", true);
                         }
                     }
@@ -387,8 +387,8 @@ namespace BarcodeConversion
             }
             catch (Exception ex)
             {
-                string msg = "Error-13: Index saved, but issue occured while attempting to set it to PRINTED. Contact system admin.";
-                throw new Exception(msg + System.Environment.NewLine + "Default.setIndexAsPrinted()- " + ex.Message);
+                string msg = "Index saved, but issue occured while attempting to set it to PRINTED. Contact system admin." + Environment.NewLine + ex.Message;
+                System.Windows.Forms.MessageBox.Show(msg, "Error 13");
             }
         }
 
@@ -404,8 +404,8 @@ namespace BarcodeConversion
             }
             catch (Exception ex)
             {
-                string msg = "Error-14: Issue occured while attempting to set job as PRINTED. Contact system admin.";
-                throw new Exception(msg + System.Environment.NewLine + "Default.setAsPrinted()- " + ex.Message);
+                string msg = "Issue occured while attempting to set job as PRINTED. Contact system admin." + Environment.NewLine + ex.Message;
+                System.Windows.Forms.MessageBox.Show(msg, "Error 14");
             }
         }
 
@@ -467,11 +467,11 @@ namespace BarcodeConversion
                 // Now, for each job ID, get corresponding job abbreviation.
                 if (jobIdList.Count > 0)
                 {
-                    using (SqlConnection con = Helper.ConnectionObj)
+                    foreach (var id in jobIdList)
                     {
-                        using (SqlCommand cmd = con.CreateCommand())
+                        using (SqlConnection con = Helper.ConnectionObj)
                         {
-                            foreach (var id in jobIdList)
+                            using (SqlCommand cmd = con.CreateCommand())
                             {
                                 cmd.CommandText = "SELECT ABBREVIATION FROM JOB WHERE ID = @job";
                                 cmd.Parameters.AddWithValue("@job", id);
@@ -480,12 +480,12 @@ namespace BarcodeConversion
                                 if (result != null)
                                 {
                                     // Fill dropdown list
-                                    jobID = (int)result;
-                                    jobIdList.Add(jobID);
+                                    string jobAbb = result.ToString();
+                                    selectJob.Items.Add(jobAbb);
                                 }
                                 else
                                 {
-                                    string msg = "Error-15: Issue occured while attempting to retrieve jobs accessible to you. Contact system admin.";
+                                    string msg = "Error 15: Issue occured while attempting to retrieve jobs accessible to you. Contact system admin.";
                                     ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "');", true);
                                     return;
                                 }
@@ -495,15 +495,15 @@ namespace BarcodeConversion
                 }
                 else
                 {
-                    string msg = "Error-16: Issue occured while attempting to retrieve jobs accessible to you. Contact system admin.";
+                    string msg = "Error 16: Issue occured while attempting to retrieve jobs accessible to you. Contact system admin.";
                     ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "');", true);
                     return;
                 }
             }
             catch (Exception ex)
             {
-                string msg = "Error-17: Issue occured while attempting to retrieve jobs accessible to you. Contact system admin.";
-                throw new Exception(msg + System.Environment.NewLine + "At Default.selectJob_Click()- " + ex.Message);
+                string msg = "Issue occured while attempting to retrieve jobs accessible to you. Contact system admin." + Environment.NewLine + ex.Message;
+                System.Windows.Forms.MessageBox.Show(msg, "Error 17");
             }
         }
 
@@ -543,8 +543,8 @@ namespace BarcodeConversion
             }
             catch (Exception ex)
             {
-                string msg = "Error-18: Issue occured while attempting to color configured jobs in dropdown. Contact system admin.";
-                throw new Exception(msg + System.Environment.NewLine + "At Default.setDrodownColor()- " + ex.Message);
+                string msg = "Issue occured while attempting to color configured jobs in dropdown. Contact system admin." + Environment.NewLine + ex.Message;
+                System.Windows.Forms.MessageBox.Show(msg, "Error 18");
             }
         }
 
@@ -574,8 +574,9 @@ namespace BarcodeConversion
             } 
             catch(Exception ex) 
             {
-                throw new Exception("Error-01: Issue occured while attempting to identify the selected Job. Contact system admin." +
-                                    System.Environment.NewLine + "At Default.getJobId()- " + ex.Message);
+                string msg = "Issue occured while attempting to identify the selected Job. Contact system admin." + Environment.NewLine + ex.Message;
+                System.Windows.Forms.MessageBox.Show(msg, "Error 01");
+                return 0;
             }
         }
 
@@ -608,8 +609,8 @@ namespace BarcodeConversion
             }
             catch (Exception ex)
             {
-                string msg = "Error-19: Issue occured while attempting to clear text fields. Contact system admin.";
-                throw new Exception(msg + System.Environment.NewLine + "At Default.clearFields()- " + ex.Message);
+                string msg = "Issue occured while attempting to clear text fields. Contact system admin." + Environment.NewLine + ex.Message;
+                System.Windows.Forms.MessageBox.Show(msg, "Error 19");
             }
         }
 
@@ -652,8 +653,10 @@ namespace BarcodeConversion
             }
             catch (Exception ex)
             {
-                throw new Exception("Error-03: Issue occured while retrieving entered entries. Contact system admin." +
-                                    System.Environment.NewLine + "Default.getEntries()- " + ex.Message);
+                string msg = "Issue occured while retrieving entered entries. Contact system admin." +
+                                    System.Environment.NewLine + ex.Message;
+                System.Windows.Forms.MessageBox.Show(msg, "Error 03");
+                return new List<EntryContent>();
             }
         }    
     }

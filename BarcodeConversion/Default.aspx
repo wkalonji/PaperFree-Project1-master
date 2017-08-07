@@ -63,13 +63,13 @@
                 <tr>
                     <td style="width: 186px"><asp:Label ID="selectJobLabel" runat="server">Job Abbreviation:</asp:Label></td>
                     <td> 
-                        <asp:DropDownList ID="selectJob" OnSelectedIndexChanged="onJobSelect" runat="server">
+                        <asp:DropDownList ID="selectJob" OnSelectedIndexChanged="onJobSelect" AutoPostBack="true" runat="server">
                             <asp:ListItem Value="Select">Select</asp:ListItem>
                         </asp:DropDownList>
                     </td>
                 </tr>
             </table> 
-            <asp:Panel ID="noJobsFound" Visible="false" runat="server"><h3> No job is currently accessible to you.</h3> </asp:Panel>
+            <asp:Panel ID="noJobsFound" Visible="false" runat="server"><h3> You currently have no access to jobs.</h3> </asp:Panel>
         </asp:Panel>
         
         <asp:panel ID="indexCreationSection" Visible="false" runat="server" style="width:auto; margin:auto">           
@@ -98,12 +98,6 @@
                     <td><asp:TextBox ID="label5Box" Visible="false" placeholder=" Required" runat="server"></asp:TextBox></td>
                 </tr>
             </table>
-            <div style="margin-bottom:20px">
-                <asp:CheckBox ID="chkShowText" Visible="false" runat="server" Checked="True" Text="Show index below barcode" TextAlign="right" />
-            </div>
-            <div style="margin-bottom:25px;margin-top:30px;">
-                <asp:Button ID="btnGenerateBarcode" runat="server" Text="Generate Index" onclick="btnGenerateBarcode_Click" />
-            </div>
 
      <%--
         Not utilized yet.
@@ -117,32 +111,21 @@
         </p>
            
      --%>   <asp:Panel ID="generateIndexSection" Visible="false" runat="server">
-                <table class = table style="width:550px;" >
-                    <tr>
-                        <td><asp:Label ID="indexLabel" runat="server">Index generated:  </asp:Label></td>
-                        <td style="text-align:left;"><asp:Label ID="textToConvert" Font-Bold="true" Font-Italic="true" Width=300 Font-size="20px" runat="server"></asp:Label></td>
-                    </tr>
-                    <tr>
-                        <td style="vertical-align:central; width:250px;"><asp:Label ID="barcodeLabel" runat="server">Corresponding Barcode:</asp:Label></td>
-                        <td style="vertical-align:middle;text-align:right"><asp:Image ID="imgBarcode" runat="server"/></td>
-                    </tr>
-                </table>
-
                 <table class = tableFull style="margin-top:25px; width:540px;">
                     <tr>
                         <td><asp:Button ID="saveIndex" runat="server" Text="Save Index" onclick="saveIndex_Click" /></td>
-                        <td style="text-align:right"><asp:Button ID="saveAndPrint" runat="server" Text="Save & Print Barcode" onclick="saveAndPrint_Click" /></td>
+                        <td style="text-align:center"><asp:Button ID="saveAndPrint" runat="server" Text="Save & Print Barcode" onclick="saveAndPrint_Click" /></td>
                     </tr>                  
                 </table>
             </asp:Panel>
-            <div style="margin-bottom:25px; margin-top:15px;">
-                <asp:Label ID="indexSavedMsg" Visible="false" Text="Index string saved successfully..." runat="server"></asp:Label>
-            </div>
         </asp:panel>
 
         <div style="margin-top:50px;"></div>
         <%--Link to Print Indexes page --%>     
         <asp:HyperLink ID="HyperLink1" Font-Underline="true" runat="server" NavigateUrl="~/Indexes"><span style="font-size:medium;">View all of your unprinted indexes</span></asp:HyperLink>
+        <div style="margin-bottom:25px; margin-top:15px;">
+            <asp:Label ID="indexSavedMsg" Visible="false" Text="Index string saved successfully..." runat="server"></asp:Label>
+        </div>
         <input id="indexString" type="hidden"  runat="server"  value=""/>
     </asp:Panel>
 

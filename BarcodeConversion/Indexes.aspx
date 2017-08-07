@@ -56,7 +56,7 @@
             <h2 style="margin-top:35px;">Print Index Sheets</h2>   
         </div>
         <div style="display:inline-block;">           
-            <table style="margin-top:15px; width:100%;" runat="server">
+            <table id="unprintedIndexTable" style="margin-top:15px; width:100%;" runat="server">
                 <tr><td colspan="3" style="padding-bottom:40px;"><asp:Button ID="getUnprintedIndexes" Visible="true" runat="server" Text="Reset" onclick="getUnprintedIndexes_Click" /></td></tr>
                 <tr style="background-color:aliceblue; height:40px;">
                     <td style="padding-left:5px;"><asp:Button ID="getBarcodeBtn" Width="105" Visible="false" runat="server" Text="Show Barcodes" onclick="getBarcode_Click" /></td>
@@ -67,6 +67,8 @@
                     </td>
                     <td style="text-align:right;padding-right:5px;"><asp:Button ID="printBarcodeBtn" Width="105" Visible="false" runat="server" Text="Print Barcodes" onclick="printBarcode_Click"/></td>
                 </tr>
+            </table>
+            <table>
                 <tr><td colspan="3" style="padding-top:30px;">
                         <h4 style="color:blue; display:inline"><asp:Label ID="description" Text="Your Unprinted Indexes" Visible="True" runat="server"></asp:Label></h4>
                     </td>
