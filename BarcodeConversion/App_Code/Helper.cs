@@ -11,20 +11,12 @@ namespace BarcodeConversion.App_Code
         public static SqlConnection ConnectionObj
         {
             get
-            {   
-                try
-                {
-                    ConnectionStringSettings conString = ConfigurationManager.ConnectionStrings["myConnection"];
-                    string connectionString = conString.ConnectionString;
-                    SqlConnection con = new SqlConnection(connectionString);
-                    return con;
-                }
-                catch (Exception ex)
-                {
-                    string msg = "Issue occured while attempting to operator's ID. Contact system admin. " + Environment.NewLine + ex.Message;
-                    System.Windows.Forms.MessageBox.Show(msg, "Error 92");
-                    return null;
-                }
+            {  
+                ConnectionStringSettings conString = ConfigurationManager.ConnectionStrings["myConnection"];
+                string connectionString = conString.ConnectionString;
+                SqlConnection con = new SqlConnection(connectionString);
+                return con;
+              
             }
         }
 
