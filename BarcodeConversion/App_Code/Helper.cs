@@ -24,22 +24,30 @@ namespace BarcodeConversion.App_Code
 
         // GET USER ID VIA USERNAME. HELPER FUNCTION
         public static int getUserId(string user)
-        {
-            int opID = 0;
-            using (SqlConnection con = ConnectionObj)
+        {   
+            try 
             {
-                using (SqlCommand cmd = con.CreateCommand())
+                int opID = 0;
+                using (SqlConnection con = ConnectionObj)
                 {
-                    cmd.CommandText = "SELECT ID FROM OPERATOR WHERE NAME = @username";
-                    cmd.Parameters.AddWithValue("@username", user);
-                    object result = cmd.ExecuteScalar();
-                    if (result != null)
+                    using (SqlCommand cmd = con.CreateCommand())
                     {
-                        opID = (int)result;
-                        return opID;
-                    } 
-                    else return opID;
+                        cmd.CommandText = "SELECT ID FROM OPERATOR WHERE NAME = @username";
+                        cmd.Parameters.AddWithValue("@username", user);
+                        con.Open();
+                        object result = cmd.ExecuteScalar();
+                        if (result != null)
+                        {
+                            opID = (int)result;
+                            return opID;
+                        }
+                        else return opID;
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
             }
         }
 
