@@ -13,7 +13,7 @@
                     <td><h2 style="display:inline; padding-top:25px;">Settings</h2></td>
                     <td style="text-align:right;"> 
                         <%-- COLLAPSE ALL--%>
-                        <div style="display:block;margin-left:710px;padding-top:5px;">
+                        <div style="display:block;margin-left:710px;padding-top:15px;">
                             <asp:ImageButton ID="collapseIcon" ImageUrl="Content/collapse_all.png" Width="30" Height="20" BackColor="White" Visible="true" runat="server" OnClick="collapseAll_Click" />
                             <%--<asp:Button ID="collapseAll" Visible="false" Width="87px" runat="server" Text="Collapse All" OnClick="collapseAll_Click"/> --%>
                         </div>
@@ -155,13 +155,13 @@
             <tr>
                 <td style="width: 615px">
                     <%--JOB ACCESS SECTION --%>
-                    <div style="width:284px; border: solid 2px black; border-radius:3px; margin-bottom:25px;margin-top:50px;">
+                    <div style="width:284px; border: solid 2px black; border-radius:3px; margin-top:50px;">
                         <asp:Button ID="assignBtn" Visible="true" runat="server" Text="Job Access Section" Width="310px" OnClick="assignShow_Click" />
                     </div>
                 </td>
                 <td style="width: 324px">
                     <%--JOB INDEX CONFIG SECTION --%>
-                    <div style="width:284px; border: solid 2px black; border-radius:3px; margin-bottom:25px;margin-top:50px;">
+                    <div style="width:284px; border: solid 2px black; border-radius:3px; margin-top:50px;">
                         <asp:Button ID="jobIndexEditingBtn" Visible="true" runat="server" Text="Job Index Configuration Section" Width="310px" OnClick="jobIndexEditingShow_Click" />
                     </div>
                 </td>
@@ -188,11 +188,11 @@
                             <tr style="background-color:aliceblue; height:40px;">
                                 <td style="height: 10px; text-align:left;"><asp:Button ID="assignedBtn"  Visible="true" runat="server" Text="Accessible" OnClick="assignedJob_Click" /></td>
                                 <td style="height: 10px; text-align:center;padding-left:8px;"><asp:Button ID="inaccessibleBtn"  Visible="true" runat="server" Text="Inaccessible" OnClick="unassignedJob_Click" /></td>
-                                <td style="height: 10px; text-align:right;"><asp:Button ID="unassignedBtn" Visible="true" runat="server" Text="All Jobs " OnClick="unassignedJob_Click"/></td>
+                                <td style="height: 10px; text-align:right;"><asp:Button ID="unassignedBtn" Visible="true" runat="server" Text="Active " OnClick="unassignedJob_Click"/></td>
                             </tr> 
                         </table>
                         <div> 
-                            <asp:Label ID="jobsLabel" Text="All Jobs" runat="server"></asp:Label>
+                            <asp:Label ID="jobsLabel" Text="Active Jobs" runat="server"></asp:Label>
                             <asp:GridView ID="jobAccessGridView" Width="318px" runat="server" style="margin-top:8px" CssClass="mydatagrid" PagerStyle-CssClass="pager"
                                         PageSize="10" HeaderStyle-CssClass="header" RowStyle-CssClass="rows" AllowPaging="true" OnPageIndexChanging="pageChange_Click" > 
                                 <columns>             
@@ -222,7 +222,6 @@
                             </table>
                         </div>   
                     </asp:Panel>
- 
                 </td>
                 <td style="width: 324px; vertical-align:top;">
                     <%--JOB INDEX CONFIG BODY --%>
