@@ -1,4 +1,5 @@
-﻿using System.Configuration;
+﻿using System;
+using System.Configuration;
 using System.Data.SqlClient;
 using System.Web.UI;
 
@@ -10,11 +11,20 @@ namespace BarcodeConversion.App_Code
         public static SqlConnection ConnectionObj
         {
             get
-            {
-                ConnectionStringSettings conString = ConfigurationManager.ConnectionStrings["myConnection"];
-                string connectionString = conString.ConnectionString;
-                SqlConnection con = new SqlConnection(connectionString);
-                return con;
+            {   
+                try
+                {
+                    ConnectionStringSettings conString = ConfigurationManager.ConnectionStrings["myConnection"];
+                    string connectionString = conString.ConnectionString;
+                    SqlConnection con = new SqlConnection(connectionString);
+                    return con;
+                }
+                catch (Exception ex)
+                {
+                    string msg = "Issue occured while attempting to operator's ID. Contact system admin. " + Environment.NewLine + ex.Message;
+                    System.Windows.Forms.MessageBox.Show(msg, "Error 92");
+                    return null;
+                }
             }
         }
 
@@ -22,26 +32,30 @@ namespace BarcodeConversion.App_Code
         // GET USER ID VIA USERNAME. HELPER FUNCTION
         public static int getUserId(string user)
         {
-            SqlConnection con = ConnectionObj;
-            con.Open();
-            int opID = 0;
-            SqlCommand cmd = new SqlCommand("SELECT ID FROM OPERATOR WHERE NAME = @username", con);
-            cmd.Parameters.AddWithValue("@username", user);
-            SqlDataReader reader = cmd.ExecuteReader();
-            if (reader.HasRows)
+            try
             {
-                while (reader.Read())
+                int opID = 0;
+                using (SqlConnection con = ConnectionObj)
                 {
-                    opID = (int)reader.GetValue(0);
+                    using (SqlCommand cmd = con.CreateCommand())
+                    {
+                        cmd.CommandText = "SELECT ID FROM OPERATOR WHERE NAME = @username";
+                        cmd.Parameters.AddWithValue("@username", user);
+                        object result = cmd.ExecuteScalar();
+                        if (result != null)
+                        {
+                            opID = (int)result;
+                            return opID;
+                        } 
+                        else return opID;
+                    }
                 }
-                reader.Close();
-                con.Close();
-                return opID;
             }
-            else
+            catch (Exception ex)
             {
-                con.Close();
-                return opID;
+                string msg = "Issue occured while attempting to operator's ID. Contact system admin. " + Environment.NewLine + ex.Message;
+                System.Windows.Forms.MessageBox.Show(msg, "Error 93");
+                return 0;
             }
         }
 
@@ -71,8 +85,5 @@ namespace BarcodeConversion.App_Code
             }
             return control;
         }
-
-
-
     }
 }

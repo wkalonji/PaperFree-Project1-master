@@ -39,7 +39,7 @@ namespace BarcodeConversion
                 opID = Helper.getUserId(user);
                 if (opID == 0)
                 {
-                    string msg = " Error 20: Could not identify this computer. Contact system admin.";
+                    string msg = " Error 20: Could not identify active user. Contact system admin.";
                     ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "');", true);
                     return;
                 }

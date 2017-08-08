@@ -681,7 +681,7 @@ namespace BarcodeConversion
             }
         }
 
-//-------------------------------------------------------------------------------------------------------
+
 
         // 'DENY' CLICKED: REMOVE OPERATOR ACCESS TO JOBS. FUNCTION
         protected void deleteAssigned_Click(object sender, EventArgs e)

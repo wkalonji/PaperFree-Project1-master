@@ -41,9 +41,8 @@ namespace BarcodeConversion
                                     }
                                     catch (SqlException ex)
                                     {
-                                        string msg = "Error-34: Issue occured trying to save operator. Please contact system admin!";
-                                        Page.ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + Environment.NewLine
-                                        + ex.Message + "')", true);
+                                        string msg = "Issue occured trying to save operator. Please contact system admin. " + Environment.NewLine + ex.Message;
+                                        System.Windows.Forms.MessageBox.Show(msg, "Error 94");
                                     }
                                 }
                             }
@@ -53,8 +52,8 @@ namespace BarcodeConversion
             }
             catch (Exception ex)
             {
-                string msg = "Error-35: Issue occured while attempting to identify this computer. Please contact your system admin.";
-                Page.ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('"+ msg + Environment.NewLine + ex.Message + "');", true);
+                string msg = "Issue occured while attempting to identify active user. Please contact your system admin. " + Environment.NewLine + ex.Message;
+                System.Windows.Forms.MessageBox.Show(msg, "Error 95");
             }
             if (isAdmin) settings.Visible = true;
         }
