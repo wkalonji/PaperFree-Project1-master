@@ -18,14 +18,14 @@ namespace BarcodeConversion
             {
                 label1Box.Focus();
 
-                // Get your accessible jobs
+                // 'JOB ABBREVIATION' DROPDOWN FILL: POPULATE DROPDOWN
                 selectJob_Click(new object(), new EventArgs());
             }
             setDropdownColor();
         }
 
 
-        // 'JOB ABBREVIATION' DROPDOWN: SET & DISPLAY CONTROLS OF SELECTED JOB. 
+        // 'JOB ABBREVIATION' DROPDOWN ITEM SELECTION: SET & DISPLAY CONTROLS OF SELECTED JOB. 
         protected void onJobSelect(object sender, EventArgs e)
         {
             try

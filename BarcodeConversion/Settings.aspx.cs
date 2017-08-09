@@ -201,8 +201,16 @@ namespace BarcodeConversion
                     catch (Exception ex)
                     {
                         jobFormClear();
-                        string msg  = "Issue occured while attempting to save the created job. Contact system admin." + Environment.NewLine + ex.Message;
-                        System.Windows.Forms.MessageBox.Show(msg, "Error 54");
+                        if (ex.Message.Contains("Violation of UNIQUE KEY"))
+                        {
+                            string msg = "The Job Abbreviation entered already exists.";
+                            ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "');", true);
+                        }
+                        else
+                        {
+                            string msg = "Issue occured while attempting to save the created job. Contact system admin." + Environment.NewLine + ex.Message;
+                            System.Windows.Forms.MessageBox.Show(msg, "Error 54");
+                        }
                     }
                 }
             }
@@ -626,7 +634,7 @@ namespace BarcodeConversion
                                             "INNER JOIN OPERATOR_ACCESS ON JOB.ID = OPERATOR_ACCESS.JOB_ID " +
                                             "WHERE ACTIVE = 1 AND OPERATOR_ACCESS.OPERATOR_ID = @ID";
                         cmd.Parameters.AddWithValue("@ID", opID);
-                        using (SqlDataAdapter da = new SqlDataAdapter())
+                        using (SqlDataAdapter da = new SqlDataAdapter(cmd))
                         {
                             DataSet ds = new DataSet();
                             da.Fill(ds);
@@ -744,7 +752,7 @@ namespace BarcodeConversion
                                 if (cmd.ExecuteNonQuery() == 1) count++;
                                 else
                                 {
-                                    string msg = "Error 70: Job: " + row.Cells[2].Text + " could not be removed. Contact system admin.";
+                                    string msg = "Error 70: Something went wrong while removing job: " + row.Cells[2].Text + ". Contact system admin.";
                                     ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "');", true);
                                     assignedJob_Click(new object(), new EventArgs());
                                     assignee.Focus();
@@ -771,7 +779,7 @@ namespace BarcodeConversion
             }
             catch (Exception ex)
             {
-                string msg = "Issue occured while attempting to deny operator's accessibility to jobs. Contact system admin." + Environment.NewLine + ex.Message;
+                string msg = "Issue occured while attempting to deny operator's job accesses. Contact system admin." + Environment.NewLine + ex.Message;
                 System.Windows.Forms.MessageBox.Show(msg, "Error 71");
             }
         }
@@ -784,7 +792,7 @@ namespace BarcodeConversion
             try
             {
                 string assigneeName = assignee.Text;
-                int count = 0;
+                int countGranted = 0, countChecked = 0, countError = 0;
                 if (assigneeName == string.Empty)
                 {
                     string msg = "Operator field is required!";
@@ -801,31 +809,43 @@ namespace BarcodeConversion
                         CheckBox chxBox = row.FindControl("cbSelect") as CheckBox;
                         if (chxBox.Checked)
                         {
+                            countChecked++;
                             string abbr = row.Cells[2].Text;
                             bool answer = AssignJob(assigneeName, abbr); // calling assignJob function
-                            if (answer == true) count++;
+                            if (answer == true) countGranted++;
                             else
                             {
-                                //assignee.Focus();
-                                //getUnassignedJobs();
+                                chxBox.Checked = false;
+                                countError++;
                             }
                         }
                     }
 
                     // Handling whether any job access was granted.
-                    if (count == 0)
+                    if (countChecked == 0)
                     {
                         string msg = "Please make sure that at least 1 job is selected.";
                         ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "');", true);
                         return;
                     }
                     else
-                    {
-                        string msg = count + " job(s) accessibility granted.";
-                        ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "');", true);
-                        getUnassignedJobs(null);
-                        assignee.Focus();
-                        return;
+                    {   
+                        if (countGranted > 0 && countGranted == countChecked)
+                        {
+                            string msg = countGranted + " job(s) granted.";
+                            ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "');", true);
+                            getUnassignedJobs(sender);
+                            assignee.Focus();
+                            return;
+                        }
+                        else 
+                        {
+                            string msg = countGranted + " Job(s) access granted. Operator already has access to the other " +countError+ " Job(s)";
+                            ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "');", true);
+                            getUnassignedJobs(sender);
+                            assignee.Focus();
+                            return;
+                        }
                     }
                 }
                 else
@@ -837,7 +857,7 @@ namespace BarcodeConversion
             }
             catch (Exception ex)
             {
-                string msg  = "Issue occured while attempting to grant jobs accessibility to operator. Contact system admin." + Environment.NewLine + ex.Message;
+                string msg  = "Issue occured while attempting to grant jobs accesses to operator. Contact system admin." + Environment.NewLine + ex.Message;
                 System.Windows.Forms.MessageBox.Show(msg, "Error 72");
             }
         }
@@ -906,7 +926,7 @@ namespace BarcodeConversion
                 // Make sure a job is selected & LABEL1 is filled.
                 if (this.selectJob.SelectedValue == "Select")
                 {
-                    string msg = "Please select a specific job!";
+                    string msg = "Please select a specific job to Set!";
                     ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "');", true);
                     jobAbb.Text = string.Empty;
                     jobAbb.Focus();
@@ -928,6 +948,7 @@ namespace BarcodeConversion
                         // First, get job ID of selected job
                         cmd.CommandText = "SELECT ID FROM JOB WHERE ABBREVIATION = @jobAbb";
                         cmd.Parameters.AddWithValue("@jobAbb", selectJob.SelectedValue);
+                        con.Open();
                         object result = cmd.ExecuteScalar();
                         if (result != null) jobID = (int)result;
                         else
@@ -977,10 +998,19 @@ namespace BarcodeConversion
             }
             catch (Exception ex)
             {
-
                 clearRules();
-                string msg = "The job selected has already been configured. If you want to reconfigure, please Unset then Set again!" + Environment.NewLine + ex.Message;
-                System.Windows.Forms.MessageBox.Show(msg, "Error 75");
+                string msg;
+                if (ex.Message.Contains("Violation of PRIMARY KEY"))
+                {
+                    msg = "The job selected has already been configured. If you want to reconfigure, please Unset then Set again!";
+                    ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "');", true);
+                }  
+                else
+                {
+                    msg = "Issue occured while attempting to configure selected job" + Environment.NewLine + ex.Message + ex.InnerException;
+                    System.Windows.Forms.MessageBox.Show(msg, "Error 75");
+                }
+                   
             }
         }
 
@@ -996,7 +1026,7 @@ namespace BarcodeConversion
                 // Make sure a job is selected
                 if (this.selectJob.SelectedValue == "Select")
                 {
-                    string msg = "Please select a specific job!";
+                    string msg = "Please select a specific job to Unset!";
                     ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "');", true);
                     jobAbb.Text = string.Empty;
                     jobAbb.Focus();
@@ -1103,8 +1133,8 @@ namespace BarcodeConversion
                     using (cmd = con.CreateCommand())
                     {
                         // If 'INACCESSIBLE' clicked
-                        if (button != null && buttonId == "inaccessibleBtn")
-                        {   
+                        if (button != null && (buttonId == "inaccessibleBtn" || buttonId == "jobAccessBtn"))
+                        {
                             // Make sure Operator is entered
                             if (assignee.Text != string.Empty) assigneeName = assignee.Text;
                             else
@@ -1161,13 +1191,13 @@ namespace BarcodeConversion
                                 jobAccessGridView.Visible = false;
                                 jobAccessBtn.Visible = false;
                                 deleteAssignedBtn.Visible = false;
-                                if (buttonId == "inaccessibleBtn") jobsLabel.Text = "Operator's Inaccessible Jobs Not Found.";
-                                else jobsLabel.Text = "No Active Jobs Found.";
+                                if (buttonId == "inaccessibleBtn" || buttonId == "jobAccessBtn") jobsLabel.Text = "Operator's Inaccessible Jobs Not Found";
+                                else jobsLabel.Text = "No Active Jobs Found";
                                 jobsLabel.Visible = true;
                             }
                             else
                             {
-                                if (buttonId == "inaccessibleBtn") jobsLabel.Text = "Operator's Currently Inaccessible Jobs.";
+                                if (buttonId == "inaccessibleBtn" || buttonId == "jobAccessBtn") jobsLabel.Text = "Operator's Currently Inaccessible Jobs";
                                 else jobsLabel.Text = "Active Jobs";
                                 jobsLabel.Visible = true;
                                 jobAccessBtn.Visible = true;
@@ -1337,8 +1367,13 @@ namespace BarcodeConversion
             }
             catch (Exception ex)
             {
-                string msg = "Issue occured while attempting to grant job accessiblity to specified operator. Contact system admin. " + Environment.NewLine + ex.Message;
-                System.Windows.Forms.MessageBox.Show(msg, "Error 89");
+                string msg;
+                // Skip jobs that have already been made accessible to specified operator.
+                if (!ex.Message.Contains("Violation of PRIMARY KEY"))
+                {
+                    msg = "Issue occured while attempting to grant job accessiblity to specified operator. Contact system admin. " + Environment.NewLine + ex.Message;
+                    System.Windows.Forms.MessageBox.Show(msg, "Error 89");
+                }
                 return false;
             }
         }
@@ -1358,6 +1393,7 @@ namespace BarcodeConversion
                                             "FROM JOB " +
                                             "INNER JOIN JOB_CONFIG_INDEX ON JOB.ID = JOB_CONFIG_INDEX.JOB_ID " +
                                             "WHERE JOB.ACTIVE = 1";
+                        con.Open();
                         using (SqlDataReader reader = cmd.ExecuteReader())
                         {
                             if (reader.HasRows)

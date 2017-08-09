@@ -116,7 +116,7 @@
                     <%--USER & PERMISSION SECTION BODY--%>
                     <div style="display:inline-block; width: 26%;" class="auto-style5">
                         <asp:Panel ID="newUserSection" Visible="false" runat="server" Width="322px" Height="250px" style="margin-top: 0px" >
-                            <table style="margin-top:25px;background-color:aliceblue;width:99%;">
+                            <table style="margin-top:25px;background-color:aliceblue;width:97%;">
                                 <tr>
                                     <td><asp:Label runat="server">
                                         <h4 >&nbsp;Add Operators & Admins</h4></asp:Label></td>
@@ -187,7 +187,7 @@
                         <table style="margin-top:20px; margin-bottom:20px; width: 316px;">
                             <tr style="background-color:aliceblue; height:40px;">
                                 <td style="height: 10px; text-align:left;"><asp:Button ID="assignedBtn"  Visible="true" runat="server" Text="Accessible" OnClick="assignedJob_Click" /></td>
-                                <td style="height: 10px; text-align:center;padding-left:8px;"><asp:Button ID="inaccessibleBtn"  Visible="true" runat="server" Text="Inaccessible" OnClick="unassignedJob_Click" /></td>
+                                <td style="height: 10px; text-align:center;padding-right:8px;"><asp:Button ID="inaccessibleBtn"  Visible="true" runat="server" Text="Inaccessible" OnClick="unassignedJob_Click" /></td>
                                 <td style="height: 10px; text-align:right;"><asp:Button ID="unassignedBtn" Visible="true" runat="server" Text="Active " OnClick="unassignedJob_Click"/></td>
                             </tr> 
                         </table>
@@ -205,7 +205,7 @@
                                         </ItemTemplate>
                                     </asp:templatefield>
 
-                                    <asp:templatefield HeaderText ="N&#176;" ShowHeader="true">
+                                    <asp:templatefield HeaderText ="&nbsp;N&#176;" ShowHeader="true">
                                         <ItemTemplate >
                                             <%# Container.DataItemIndex + 1 %>
                                         </ItemTemplate>
@@ -291,7 +291,7 @@
                             <tr style="background-color:aliceblue; height:40px;">
                                 <td style="height: 10px; text-align:left;">
                                     <asp:Button ID="unsetRules" Visible="true" runat="server" Text="Unset"
-                                        OnClientClick="return confirm('ATTENTION!\n\nRemoving or changing configuration will affect the Details section of still unprinted indexes related to this job. We suggest that you make sure that there are no more unprinted indexes related to this job accross all operators prior. Then you can Unset & reconfigure the job.\nDo you still want to procede with reconfiguration?');"
+                                        OnClientClick="return confirm('ATTENTION!\n\nRemoving or changing configuration will affect the Details section of still unprinted indexes related to this job. We suggest that you make sure that there are no more unprinted indexes related to this job accross all operators prior unsetting config.\nDo you still want to procede with reconfiguration?');"
                                         OnClick="unsetRules_Click" /></td>
                                 <td style="height: 10px; text-align:right;"><asp:Button ID="setRules" style="margin-left:25px;" Visible="true" runat="server" Text="Set " OnClick="setRules_Click" /></td>
                             </tr> 

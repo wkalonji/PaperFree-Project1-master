@@ -20,7 +20,7 @@ namespace BarcodeConversion
                 getUnprintedIndexes_Click(new object(), new EventArgs());
             }
             Control c = Helper.GetPostBackControl(this.Page);
-            if (c != null && (c.ID == "getUnprintedIndexes" || c.ID == "recordsPerPage")) indexesGridView.PageIndex = 0;
+            if (c != null && (c.ID == "resetBtn" || c.ID == "recordsPerPage")) indexesGridView.PageIndex = 0;
         }
 
 
@@ -276,9 +276,22 @@ namespace BarcodeConversion
         {
             try
             {
+                // First check whether any checkbox was checked
+                bool boxChecked = false;
+                foreach (GridViewRow row in indexesGridView.Rows)
+                {
+                    CheckBox chxBox = row.FindControl("cbSelect") as CheckBox;
+                    if (chxBox.Checked) boxChecked = true;
+                }  
+                if (boxChecked == false)
+                {
+                    string msg = "To print barcode, please select at least one index";
+                    ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "');", true);
+                    return;
+                }
+
                 // Hide all current html.
                 unprintedIndexesPanel.Visible = false;
-                bool boxChecked = false;
                 if (!Page.IsValid) return;
 
                 // Creating index barcode webpage
@@ -292,7 +305,6 @@ namespace BarcodeConversion
 
                     if (chxBox.Checked)
                     {
-                        boxChecked = true;
                         if (row.RowType == DataControlRowType.DataRow)
                         {
                             // Get barcode Image
@@ -386,15 +398,6 @@ namespace BarcodeConversion
                     }
                 }
                 Response.Write("</div>");
-
-                // Handling of whether any checkbox was checked
-                if (boxChecked == false)
-                {
-                    string msg = "To print barcode, please select at least one index";
-                    ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "');", true);
-                    unprintedIndexesPanel.Visible = true;
-                    return;
-                }
             }
             catch (Exception ex)
             {

@@ -27,7 +27,7 @@ namespace BarcodeConversion
 
                 // Reset gridview page
                 Control c = Helper.GetPostBackControl(this.Page);
-                if (c != null && (c.ID == "reset" || c.ID == "whoFilter" || c.ID == "whenFilter" ||
+                if (c != null && (c.ID == "resetBtn" || c.ID == "whoFilter" || c.ID == "whenFilter" ||
                     c.ID == "whatFilter" || c.ID == "recordsPerPage")) indexeStatusGridView.PageIndex = 0;
             }
             catch (Exception ex)
@@ -470,15 +470,19 @@ namespace BarcodeConversion
                     }
                 }
             }
-            catch (SqlException ex)
-            {
-                string msg  = "Issue occured while attempting to process filter entries. Contact system admin." + Environment.NewLine + ex.Message;
-                System.Windows.Forms.MessageBox.Show(msg, "44");
-            }
             catch (Exception ex)
             {
-                string msg  = "Date fields required!." + Environment.NewLine + ex.Message;
-                System.Windows.Forms.MessageBox.Show(msg, "45");    
+                string msg;   
+                if (ex.Message.Contains("valid DateTime"))
+                {
+                    msg = "Date fields required!";
+                    ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "');", true);
+                }
+                else
+                {
+                    msg = "Issue occured while attempting to process filter entries." + Environment.NewLine + ex.Message;
+                    System.Windows.Forms.MessageBox.Show(msg, "Error 45");
+                }
             }
         }
 

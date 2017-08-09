@@ -52,12 +52,21 @@
 
 
     <asp:Panel ID="unprintedIndexesPanel" runat="server">
-        <div style="margin-top:45px; margin-bottom:40px; height:50px; border-bottom:solid 1px green;width:899px;">
-            <h2 style="margin-top:35px;">Print Index Sheets</h2>   
+         <div style="margin-top:45px; margin-bottom:40px; height:50px; border-bottom:solid 1px green;width:899px;">
+            <table style="width:899px;">
+                <tr>
+                    <td><h2 style="display:inline; padding-top:25px;">Print Index Sheets</h2></td>
+                    <td style="text-align:right;"> 
+                        <div style="display:block;padding-bottom:1px;padding-top:6px;">
+                            <asp:ImageButton ID="resetBtn" ImageUrl="Content/reset.png" Width="35" Height="35"  BackColor="White" Visible="true" runat="server" OnClick="getUnprintedIndexes_Click" />
+                        </div>
+                    </td>
+                </tr>
+            </table>
         </div>
+
         <div style="display:inline-block;">           
             <table id="unprintedIndexTable" style="margin-top:15px; width:100%;" runat="server">
-                <tr><td colspan="3" style="padding-bottom:40px;"><asp:Button ID="getUnprintedIndexes" Visible="true" runat="server" Text="Reset" onclick="getUnprintedIndexes_Click" /></td></tr>
                 <tr style="background-color:aliceblue; height:40px;">
                     <td style="padding-left:5px;"><asp:Button ID="getBarcodeBtn" Width="105" Visible="false" runat="server" Text="Show Barcodes" onclick="getBarcode_Click" /></td>
                     <td style="text-align:center;">
@@ -74,7 +83,7 @@
                     </td>
                 </tr>
             </table>
-            <table style="width:100%;">
+            <table style="width:99.8%;">
                 <tr >
                     <td style="padding-top:10px;">
                         <asp:Label ID="sortOrder" Text="Sorted By : CREATION_TIME ASC (Default)" runat="server"></asp:Label>
@@ -103,7 +112,7 @@
                             <asp:CheckBox ID="cbSelect" runat="server" />
                         </ItemTemplate>
                     </asp:templatefield>
-                    <asp:templatefield HeaderText="N°" ShowHeader="true">
+                    <asp:templatefield HeaderText="&nbsp;N°" ShowHeader="true">
                         <ItemTemplate>
                             <%# Container.DataItemIndex + 1 %>
                         </ItemTemplate>

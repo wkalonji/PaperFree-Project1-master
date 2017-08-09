@@ -69,7 +69,7 @@
                     </td>
                 </tr>
             </table> 
-            <asp:Panel ID="noJobsFound" Visible="false" runat="server"><h3> You currently have no access to jobs.</h3> </asp:Panel>
+            <asp:Panel ID="noJobsFound" Visible="false" runat="server"><h3> You currently have no accessible jobs.</h3> </asp:Panel>
         </asp:Panel>
         
         <asp:panel ID="indexCreationSection" Visible="false" runat="server" style="width:auto; margin:auto">           

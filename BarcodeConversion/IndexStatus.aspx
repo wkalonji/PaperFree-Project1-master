@@ -33,14 +33,20 @@
 
 
      <asp:Panel ID="indexStatusPanel" runat="server">
-        <div style="margin-top:45px; margin-bottom:40px; height:50px; border-bottom:solid 1px green;width:899px;">
-            <h2 style="margin-top:35px;">Index Status Report</h2>
-        </div>   
-        <div>           
-            <table class = "table">
-                <tr> 
-                    <td style="padding-bottom:15px;"><asp:Button ID="reset" runat="server" Text="Reset" onclick="reset_Click" /></td>
+        <div style="margin-top:45px; height:50px; border-bottom:solid 1px green;width:899px;">
+            <table style="width:899px;">
+                <tr>
+                    <td><h2 style="display:inline; padding-top:25px;">Index Status Report</h2></td>
+                    <td style="text-align:right;"> 
+                        <div style="display:block;padding-bottom:1px;padding-top:6px;">
+                            <asp:ImageButton ID="resetBtn" ImageUrl="Content/reset.png" Width="35" Height="35"  BackColor="White" Visible="true" runat="server" OnClick="reset_Click" />
+                        </div>
+                    </td>
                 </tr>
+            </table>
+        </div>  
+        <div>           
+            <table class = "table" style="width:610px;">
                 <tr>
                     <td><asp:Label ID="filterLabel" runat="server"><h4>Filter :</h4></asp:Label></td>
                     <td style="padding-top:14px;"> 
@@ -87,7 +93,7 @@
                 </table>
             </asp:Panel>
             <div style="display:inline-block;">
-                <table id="gridHeader" style="width:100%;margin-top:25px;margin-bottom:-10px;" runat="server">
+                <table id="gridHeader" style="width:99.8%;margin-top:25px;margin-bottom:-10px;" runat="server">
                     <tr><td colspan="2"><h4 style="color:blue"><asp:Label ID="description" Text="" runat="server"></asp:Label></h4> </td></tr>
                     <tr>
                         <td><asp:Label ID="sortOrder" Text="Sorted By : CREATION_TIME ASC (Default)" runat="server"></asp:Label></td>
@@ -108,7 +114,7 @@
                             PageSize="10" HeaderStyle-CssClass="header" RowStyle-CssClass="rows" AllowPaging="true" OnPageIndexChanging="pageChange_Click"
                             OnRowDataBound="rowDataBound" OnSorting="gridView_Sorting" AllowSorting="True"> 
                     <columns>
-                        <asp:templatefield HeaderText ="N°" ShowHeader="true">
+                        <asp:templatefield HeaderText ="&nbsp;N°" ShowHeader="true">
                             <ItemTemplate >
                                 <%# Container.DataItemIndex + 1 %>
                             </ItemTemplate>
