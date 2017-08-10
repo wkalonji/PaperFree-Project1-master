@@ -4,6 +4,8 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Data;
 using BarcodeConversion.App_Code;
+using System.Web.UI.HtmlControls;
+using System.Collections.Generic;
 
 namespace BarcodeConversion
 {
@@ -12,10 +14,15 @@ namespace BarcodeConversion
         protected void Page_Load(object sender, EventArgs e)
         {   
              try
-            {   
+            {
                 // Make sure only admins can see Settings page
-                if (!Page.IsPostBack) jobAbb.Focus();
-                if (userStatus() == "True")
+                if (!Page.IsPostBack)
+                {
+                    jobAbb.Focus();
+                    ViewState["countClicks"] = 0;
+                    ViewState["editBtn#"] = 0;
+                }
+                    if (userStatus() == "True")
                 {
                     SettingsPanel.Visible = true;
                 }
@@ -911,6 +918,187 @@ namespace BarcodeConversion
             {
                 jobAssignedToLabel.Visible = false;
                 jobAssignedTo.Visible = false;
+            }
+        }
+
+
+
+        // '+' CLICKED: ADD LABEL CONTROLS
+        protected void labelControls_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                ViewState["countClicks"] = (int)ViewState["countClicks"] + 1;
+                int countClicks = (int)ViewState["countClicks"];
+                int editBtnNumber = (int)ViewState["editBtn#"];
+
+                if (countClicks == 1 || editBtnNumber == 1)
+                {
+                    // Make sure label field is not empty  
+                    if (labelTextBox.Text == string.Empty)
+                    {
+                        string msg = "LABEL field is required!";
+                        ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "');", true);
+                        labelTextBox.Text = string.Empty;
+                        labelTextBox.Attributes["placeholder"] = " Required for Set";
+                        labelTextBox.Focus();
+                        ViewState["countClicks"] = 0;
+                        return;
+                    }
+
+                    // Make sure that regex & message fields are both either filled or blank
+                    if ((regexTextBox.Text == string.Empty && msgTextBox.Text != string.Empty) || (regexTextBox.Text != string.Empty && msgTextBox.Text == string.Empty))
+                    {
+                        string msg = "Both REGEX and MESSAGE fields must be either filled or empty.";
+                        ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + "');", true);
+                        labelTextBox.Text = string.Empty;
+                        labelTextBox.Attributes["placeholder"] = " Required for Set";
+                        if (regexTextBox.Text == string.Empty) regexTextBox.Focus();
+                        else if (msgTextBox.Text == string.Empty) msgTextBox.Focus();
+                        ViewState["countClicks"] = 0;
+                        return;
+                    }
+                    if (countClicks == 1 && editBtnNumber == 0)
+                    {   
+                        ViewState["editBtn#"] = (int)ViewState["editBtn#"] + 1;
+                        editBtnNumber = (int)ViewState["editBtn#"];
+                    }
+                }
+                LabelControls controlsValues = new LabelControls(labelTextBox.Text, regexTextBox.Text, msgTextBox.Text);
+                ViewState["controls" + editBtnNumber] = controlsValues;
+                showControls(editBtnNumber, controlsValues);
+
+
+
+
+
+                // Show label input controls
+                if (editBtnNumber >= 2)
+                {
+                    labelTextBox.Attributes["placeholder"] = " Optional";
+                }
+                int test = 0;
+                for (int i=0; i<5; i++)
+                {
+                    if (ViewState["controls" + i] != null) test++;
+                }
+                if (test == 5) labelControlsTable.Visible = false;
+
+
+
+
+                //labelTextBox.Text = string.Empty;
+                //labelTextBox.Focus();
+
+                //if (editBtnNumber != 0)
+                //{
+
+
+                //    ViewState["editBtn#"] = 0;
+
+
+                //    string message = lc.labelText + " " + lc.regexText + " " + lc.regexText + countClicks;
+                //    ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + message + "');", true);
+                //}
+                //else
+                //{
+                //    LabelControls lc = (LabelControls)ViewState["controls" + countClicks];
+                //    showControls(countClicks, lc);
+
+
+                //    string message = lc.labelText + " " + lc.regexText + " " + lc.regexText + countClicks;
+                //    ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + message + "');", true);
+                //}
+            }
+            catch (Exception ex)
+            {
+                string msg = "Error 74: Issue occured while attempting to add label controls. Contact system admin.";
+                ClientScript.RegisterStartupScript(this.GetType(), "myalert", "alert('" + msg + ex.Message + "');", true);
+            }
+        }
+
+
+
+        // SHOW CONTROLS
+        private void showControls(int number, LabelControls lc)
+        {
+            switch (number)
+            {
+                case 1:
+                    label1.Text = " " + lc.labelText;
+                    label1.ReadOnly = true;
+                    lab1.Visible = true;
+                    label1.Visible = true;
+                    edit1.Visible = true;
+                    break;
+                case 2:
+                    label2.Text = " " + lc.labelText;
+                    label2.ReadOnly = true;
+                    lab2.Visible = true;
+                    label2.Visible = true;
+                    edit2.Visible = true;
+                    break;
+                case 3:
+                    label3.Text = " " + lc.labelText;
+                    label3.ReadOnly = true;
+                    lab3.Visible = true;
+                    label3.Visible = true;
+                    edit3.Visible = true;
+                    break;
+                case 4:
+                    label4.Text = " " + lc.labelText;
+                    label4.ReadOnly = true;
+                    lab4.Visible = true;
+                    label4.Visible = true;
+                    edit4.Visible = true;
+                    break;
+                case 5:
+                    label5.Text = " " + lc.labelText;
+                    label5.ReadOnly = true;
+                    lab5.Visible = true;
+                    label5.Visible = true;
+                    edit5.Visible = true;
+                    break;
+            }
+        }
+
+
+        // 'EDIT' ICON CLICKED: EDIT LABEL CONTROLS
+        protected void editControl(object sender, EventArgs e)
+        {
+            labelControlsTable.Visible = true;
+            Control editBtn = (Control)sender;
+            int lastChar = Convert.ToInt32(editBtn.ID.Substring(editBtn.ID.Length - 1));
+            ViewState["countClicks"] = (int)ViewState["countClicks"] - 1;
+            ViewState["editBtn#"] = lastChar;
+
+            switch (lastChar)
+            {
+                case 1:
+                    lab1.Visible = false;
+                    label1.Visible = false;
+                    edit1.Visible = false;
+                    break;
+                case 2:
+                    lab2.Visible = false;
+                    label2.Visible = false;
+                    edit2.Visible = false;
+                    break;
+                case 3:
+                    lab3.Visible = false;
+                    label3.Visible = false;
+                    edit3.Visible = false;
+                    break;
+                case 4:;
+                    lab4.Visible = false;
+                    label4.Visible = false;
+                    edit4.Visible = false;
+                    break;
+                case 5:
+                    lab5.Visible = false;
+                    label5.Visible = false;
+                    edit5.Visible = false;
+                    break;
             }
         }
 

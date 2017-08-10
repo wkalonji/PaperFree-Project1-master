@@ -231,7 +231,7 @@
                                 <td><asp:Label runat="server">
                                     <h4 >&nbsp;Create Form Controls for Jobs</h4></asp:Label></td>
                                 <td style="text-align:right;padding-right:5px;"><asp:Button Text="?" Height="23" 
-                                    OnClientClick="return alert('Notes:\n*  Only jobs configured here can be processed by operators.\n*  Red colored dropdown jobs are Configured jobs.')" runat="server"></asp:Button></td>
+                                    OnClientClick="return alert('Notes:\n*  Only jobs configured here can be processed by operators.\n*  Red colored dropdown jobs are Configured jobs.\n*  Type in your regex, then space, then any message you would like operators to see if their entry is not valid (e.g: \\w{4} Four characters word only, no special characters. )')" runat="server"></asp:Button></td>
                             </tr>
                         </table>
                         <table class = table style="width:320px;">
@@ -245,48 +245,86 @@
                                 </td>
                             </tr>
                         </table>
-                        <table  style="margin-top:20px; width: 99%;"  class=auto-style3 >
+
+
+                        <table style="margin-top:20px; width: 99%;"  class=auto-style3 runat="server" >
                             <tr style="height:35px;">
-                                <td style=""><asp:Label Text="LABEL1:" runat="server"></asp:Label></td>
-                                <td style="height: 25px; text-align:right;"><asp:TextBox ID="label1" placeholder=" Required only for Set" onfocus="this.select()" runat="server"></asp:TextBox></td>
+                                <td style="width: 80px"><asp:Label ID="lab1" Visible="false" Text="LABEL1:" runat="server"></asp:Label></td>
+                                <td style="height: 25px; text-align:right;"><asp:TextBox ID="label1" Visible="false" placeholder=" Required only for Set" onfocus="this.select()" runat="server" Width="200px"></asp:TextBox></td>
+                                <td style="padding-left:5px;padding-top:2px;"><asp:ImageButton ID="edit1" Visible="false" ImageUrl="Content/edit.png" runat="server" Height="17px" Width="18px" OnClick="editControl" /></td>
                             </tr>
-                            <tr style="height:35px;">
-                                <td><asp:Label Text="REGEX1:" runat="server"></asp:Label></td>
+                            <tr style="height:35px;" visible="false" runat="server">
+                                <td style="width: 80px"><asp:Label Text="REGEX1:" runat="server"></asp:Label></td>
                                 <td style="height: 25px; text-align:right;"><asp:TextBox ID="regex1" placeholder=" Optional" onfocus="this.select()" runat="server"></asp:TextBox></td>
                             </tr>
+
+
+
                             <tr style="height:35px;">
-                                <td><asp:Label Text="LABEL2:" runat="server"></asp:Label></td>
-                                <td style="height: 25px; text-align:right;"><asp:TextBox ID="label2" placeholder=" Optional" onfocus="this.select()" runat="server"></asp:TextBox></td>
+                                <td style="width: 80px"><asp:Label ID="lab2" Visible="false" Text="LABEL2:" runat="server"></asp:Label></td>
+                                <td style="height: 25px; text-align:right;"><asp:TextBox ID="label2" Visible="false" placeholder=" Optional" onfocus="this.select()" runat="server" Width="200px"></asp:TextBox></td>
+                                <td style="padding-left:5px;padding-top:2px;"><asp:ImageButton ID="edit2" Visible="false" ImageUrl="Content/edit.png" runat="server" Height="17px" Width="18px" OnClick="editControl"/></td>
                             </tr>
-                            <tr style="height:35px;">
-                                <td><asp:Label Text="REGEX2:" runat="server"></asp:Label></td>
+                            <tr style="height:35px;" visible="false" runat="server">
+                                <td style="width: 80px"><asp:Label Text="REGEX2:" runat="server"></asp:Label></td>
                                 <td style="height: 25px; text-align:right;"><asp:TextBox ID="regex2" placeholder=" Optional" onfocus="this.select()" runat="server"></asp:TextBox></td>
                             </tr>
+
+
+
                             <tr style="height:35px;">
-                                <td><asp:Label Text="LABEL3:" runat="server"></asp:Label></td>
-                                <td style="height: 25px; text-align:right;"><asp:TextBox ID="label3" placeholder=" Optional" onfocus="this.select()" runat="server"></asp:TextBox></td>
+                                <td style="width: 80px"><asp:Label ID="lab3" Visible="false" Text="LABEL3:" runat="server"></asp:Label></td>
+                                <td style="height: 25px; text-align:right;"><asp:TextBox ID="label3" Visible="false" placeholder=" Optional" onfocus="this.select()" runat="server" Width="200px"></asp:TextBox></td>
+                                <td style="padding-left:5px;padding-top:2px;"><asp:ImageButton ID="edit3" Visible="false" ImageUrl="Content/edit.png" runat="server" Height="17px" Width="18px" OnClick="editControl"/></td>
                             </tr>
-                            <tr style="height:35px;">
-                                <td><asp:Label Text="REGEX3:" runat="server"></asp:Label></td>
+                            <tr style="height:35px;" visible="false" runat="server">
+                                <td style="width: 80px"><asp:Label Text="REGEX3:" runat="server"></asp:Label></td>
                                 <td style="height: 25px; text-align:right;"><asp:TextBox ID="regex3" placeholder=" Optional" onfocus="this.select()" runat="server"></asp:TextBox></td>
                             </tr>
+
+
+
                             <tr style="height:35px;">
-                                <td><asp:Label Text="LABEL4:" runat="server"></asp:Label></td>
-                                <td style="height: 25px; text-align:right;"><asp:TextBox ID="label4" placeholder=" Optional" onfocus="this.select()" runat="server"></asp:TextBox></td>
+                                <td style="width: 80px"><asp:Label ID="lab4" Visible="false" Text="LABEL4:" runat="server"></asp:Label></td>
+                                <td style="height: 25px; text-align:right;"><asp:TextBox ID="label4" Visible="false" placeholder=" Optional" onfocus="this.select()" runat="server" Width="200px"></asp:TextBox></td>
+                                <td style="padding-left:5px;padding-top:2px;"><asp:ImageButton ID="edit4" Visible="false" ImageUrl="Content/edit.png" runat="server" Height="17px" Width="18px" OnClick="editControl"/></td>
                             </tr>
-                            <tr style="height:35px;">
-                                <td><asp:Label Text="REGEX4:" runat="server"></asp:Label></td>
+                            <tr style="height:35px;" visible="false" runat="server">
+                                <td style="width: 80px"><asp:Label Text="REGEX4:" runat="server"></asp:Label></td>
                                 <td style="height: 25px; text-align:right;"><asp:TextBox ID="regex4" placeholder=" Optional" onfocus="this.select()" runat="server"></asp:TextBox></td>
                             </tr>
+
+
                             <tr style="height:35px;">
-                                <td><asp:Label Text="LABEL5:" runat="server"></asp:Label></td>
-                                <td style="height: 25px; text-align:right;"><asp:TextBox ID="label5" placeholder=" Optional" onfocus="this.select()" runat="server"></asp:TextBox></td>
+                                <td style="width: 80px"><asp:Label ID="lab5" Visible="false" Text="LABEL5:" runat="server"></asp:Label></td>
+                                <td style="height: 25px; text-align:right;"><asp:TextBox ID="label5" Visible="false" placeholder=" Optional" onfocus="this.select()" runat="server" Width="200px"></asp:TextBox></td>
+                                <td style="padding-left:5px;padding-top:2px;"><asp:ImageButton ID="edit5" Visible="false" ImageUrl="Content/edit.png" runat="server" Height="17px" Width="18px" OnClick="editControl"/></td>
                             </tr>
-                            <tr style="height:35px;">
-                                <td><asp:Label Text="REGEX5:" runat="server"></asp:Label></td>
+                            <tr style="height:35px;" visible="false" runat="server">
+                                <td style="width: 80px"><asp:Label Text="REGEX5:" runat="server"></asp:Label></td>
                                 <td style="height:25px; text-align:right;"><asp:TextBox ID="regex5" placeholder=" Optional" onfocus="this.select()" runat="server"></asp:TextBox></td>
                             </tr>
                         </table>
+
+                        <table id="labelControlsTable"  style="margin-top:20px; width: 99%;"  class=auto-style3 runat="server" >
+                            <tr style="height:35px;">
+                                <td style="width: 80px"><asp:Label Text="LABEL:" runat="server"></asp:Label></td>
+                                <td style="height: 25px; text-align:right;"><asp:TextBox ID="labelTextBox" placeholder=" Required only for Set" onfocus="this.select()" runat="server" Width="207px"></asp:TextBox></td>
+                            </tr>
+                            <tr style="vertical-align:top;">
+                                <td style="height: 25px; width: 80px"><asp:Label Text="REGEX:" runat="server"></asp:Label></td>
+                                <td style="height: 25px; text-align:right;"><asp:TextBox ID="regexTextBox" placeholder=" Optional" TextMode="MultiLine" onfocus="this.select()" runat="server" Width="207px" Height="60px"></asp:TextBox></td>
+                            </tr>
+                            <tr style="vertical-align:top;">
+                                <td style="width: 80px; height: 25px;"><asp:Label Text="MESSAGE:" runat="server"></asp:Label></td>
+                                <td style="height:25px; text-align:right;"><asp:TextBox ID="msgTextBox" placeholder=" Popup message if entry not valid. &nbsp;Required only if Regex is set" TextMode="MultiLine" onfocus="this.select()" runat="server" Height="60px" Width="207px"></asp:TextBox></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" style="height: 15px; text-align:right;"><asp:Button ID="lableControls" Text="+" Font-Size="Small" runat="server" Height="22px" Width="21px" OnClick="labelControls_Click" /></td>
+                            </tr>
+                        </table>
+
+
                         <table style="margin-top:20px; margin-bottom:20px; width: 316px;">
                             <tr style="background-color:aliceblue; height:40px;">
                                 <td style="height: 10px; text-align:left;">

@@ -346,6 +346,15 @@ namespace BarcodeConversion {
         protected global::System.Web.UI.WebControls.DropDownList selectJob;
         
         /// <summary>
+        /// lab1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lab1;
+        
+        /// <summary>
         /// label1 control.
         /// </summary>
         /// <remarks>
@@ -353,6 +362,15 @@ namespace BarcodeConversion {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox label1;
+        
+        /// <summary>
+        /// edit1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.ImageButton edit1;
         
         /// <summary>
         /// regex1 control.
@@ -364,6 +382,15 @@ namespace BarcodeConversion {
         protected global::System.Web.UI.WebControls.TextBox regex1;
         
         /// <summary>
+        /// lab2 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lab2;
+        
+        /// <summary>
         /// label2 control.
         /// </summary>
         /// <remarks>
@@ -371,6 +398,15 @@ namespace BarcodeConversion {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox label2;
+        
+        /// <summary>
+        /// edit2 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.ImageButton edit2;
         
         /// <summary>
         /// regex2 control.
@@ -382,6 +418,15 @@ namespace BarcodeConversion {
         protected global::System.Web.UI.WebControls.TextBox regex2;
         
         /// <summary>
+        /// lab3 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lab3;
+        
+        /// <summary>
         /// label3 control.
         /// </summary>
         /// <remarks>
@@ -389,6 +434,15 @@ namespace BarcodeConversion {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox label3;
+        
+        /// <summary>
+        /// edit3 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.ImageButton edit3;
         
         /// <summary>
         /// regex3 control.
@@ -400,6 +454,15 @@ namespace BarcodeConversion {
         protected global::System.Web.UI.WebControls.TextBox regex3;
         
         /// <summary>
+        /// lab4 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lab4;
+        
+        /// <summary>
         /// label4 control.
         /// </summary>
         /// <remarks>
@@ -407,6 +470,15 @@ namespace BarcodeConversion {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox label4;
+        
+        /// <summary>
+        /// edit4 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.ImageButton edit4;
         
         /// <summary>
         /// regex4 control.
@@ -418,6 +490,15 @@ namespace BarcodeConversion {
         protected global::System.Web.UI.WebControls.TextBox regex4;
         
         /// <summary>
+        /// lab5 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lab5;
+        
+        /// <summary>
         /// label5 control.
         /// </summary>
         /// <remarks>
@@ -427,6 +508,15 @@ namespace BarcodeConversion {
         protected global::System.Web.UI.WebControls.TextBox label5;
         
         /// <summary>
+        /// edit5 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.ImageButton edit5;
+        
+        /// <summary>
         /// regex5 control.
         /// </summary>
         /// <remarks>
@@ -434,6 +524,51 @@ namespace BarcodeConversion {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox regex5;
+        
+        /// <summary>
+        /// labelControlsTable control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlTable labelControlsTable;
+        
+        /// <summary>
+        /// labelTextBox control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox labelTextBox;
+        
+        /// <summary>
+        /// regexTextBox control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox regexTextBox;
+        
+        /// <summary>
+        /// msgTextBox control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox msgTextBox;
+        
+        /// <summary>
+        /// lableControls control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button lableControls;
         
         /// <summary>
         /// unsetRules control.
