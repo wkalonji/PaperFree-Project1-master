@@ -129,6 +129,7 @@
   <ItemGroup>
     <Content Include="Content\calendar-blue.css" />
     <Content Include="Content\calender.png" />
+    <Content Include="Content\delete.png" />
     <Content Include="Content\edit.png" />
     <Content Include="Content\hide_all.png" />
     <Content Include="Content\collapse_all.png" />

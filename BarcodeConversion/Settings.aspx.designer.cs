@@ -346,6 +346,33 @@ namespace BarcodeConversion {
         protected global::System.Web.UI.WebControls.DropDownList selectJob;
         
         /// <summary>
+        /// Label6 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label Label6;
+        
+        /// <summary>
+        /// addLabel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button addLabel;
+        
+        /// <summary>
+        /// labelsTable control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Table labelsTable;
+        
+        /// <summary>
         /// lab1 control.
         /// </summary>
         /// <remarks>
@@ -371,6 +398,15 @@ namespace BarcodeConversion {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.ImageButton edit1;
+        
+        /// <summary>
+        /// delete1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.ImageButton delete1;
         
         /// <summary>
         /// regex1 control.
@@ -409,6 +445,15 @@ namespace BarcodeConversion {
         protected global::System.Web.UI.WebControls.ImageButton edit2;
         
         /// <summary>
+        /// delete2 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.ImageButton delete2;
+        
+        /// <summary>
         /// regex2 control.
         /// </summary>
         /// <remarks>
@@ -443,6 +488,15 @@ namespace BarcodeConversion {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.ImageButton edit3;
+        
+        /// <summary>
+        /// delete3 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.ImageButton delete3;
         
         /// <summary>
         /// regex3 control.
@@ -481,6 +535,15 @@ namespace BarcodeConversion {
         protected global::System.Web.UI.WebControls.ImageButton edit4;
         
         /// <summary>
+        /// delete4 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.ImageButton delete4;
+        
+        /// <summary>
         /// regex4 control.
         /// </summary>
         /// <remarks>
@@ -515,6 +578,15 @@ namespace BarcodeConversion {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.ImageButton edit5;
+        
+        /// <summary>
+        /// delete5 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.ImageButton delete5;
         
         /// <summary>
         /// regex5 control.
