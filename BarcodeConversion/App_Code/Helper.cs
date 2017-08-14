@@ -68,7 +68,7 @@ namespace BarcodeConversion.App_Code
                 foreach (string ctl in page.Request.Form)
                 {
                     Control c = page.FindControl(ctl);
-                    if (c is System.Web.UI.WebControls.Button)
+                    if (c is System.Web.UI.WebControls.Button || c is System.Web.UI.WebControls.ImageButton)
                     {
                         control = c;
                         break;

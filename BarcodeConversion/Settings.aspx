@@ -242,7 +242,6 @@
                                         <asp:ListItem Value="Select">Select</asp:ListItem>
                                     </asp:DropDownList>
                                 </td>
-                                <td style="text-align:right;"><asp:Label ID="Label6" runat="server">Labels:</asp:Label></td>
                                 <td style="text-align:right;"><asp:Button ID="addLabel" Text="Add Label" runat="server" OnClick="addLabel_Click" /></td>
                         </table>
 
@@ -256,7 +255,7 @@
                         <table  style="margin-top:20px; width:99%;"  class=auto-style3>
                             <tr>
                                 <td style="width: 80px;padding-top:8px;"><asp:Label ID="lab1" Visible="false" Height="25" Text="LABEL1:" runat="server"></asp:Label></td>
-                                <td style="text-align:right;"><asp:TextBox ID="label1" Visible="false" placeholder=" Required only for Set" onfocus="this.select()" runat="server" Width="200px"></asp:TextBox></td>
+                                <td style="text-align:right;"><asp:TextBox ID="l1" Visible="false" placeholder=" Required only for Set" onfocus="this.select()" runat="server" Width="200px"></asp:TextBox></td>
                                 <td style="padding-left:5px;padding-top:4px;"><asp:ImageButton ID="edit1" Visible="false" ImageUrl="Content/edit.png" runat="server" Height="16px" Width="16px" OnClick="processRequest" /></td>
                                 <td style="padding-left:5px;padding-top:4px;"><asp:ImageButton ID="delete1" Visible="false" ImageUrl="Content/delete.png" runat="server" Height="18px" Width="18px" OnClientClick="return confirm('Are you sure you want to delete LABEL1?')" OnClick="processRequest" /></td>
                             </tr>
@@ -269,7 +268,7 @@
 
                             <tr>
                                 <td style="width: 80px;padding-top:8px;"><asp:Label ID="lab2" Visible="false" Height="25" Text="LABEL2:" runat="server"></asp:Label></td>
-                                <td style="text-align:right;"><asp:TextBox ID="label2" Visible="false" placeholder=" Optional" onfocus="this.select()" runat="server" Width="200px"></asp:TextBox></td>
+                                <td style="text-align:right;"><asp:TextBox ID="l2" Visible="false" placeholder=" Optional" onfocus="this.select()" runat="server" Width="200px"></asp:TextBox></td>
                                 <td style="padding-left:5px;padding-top:4px;"><asp:ImageButton ID="edit2" Visible="false" ImageUrl="Content/edit.png" runat="server" Height="16px" Width="16px" OnClick="processRequest" /></td>
                                 <td style="padding-left:5px;padding-top:4px;"><asp:ImageButton ID="delete2" Visible="false" ImageUrl="Content/delete.png" runat="server" Height="18px" Width="18px" OnClientClick="return confirm('Are you sure you want to delete LABEL2?')" OnClick="processRequest" /></td>
                             </tr>
@@ -282,7 +281,7 @@
 
                             <tr>
                                 <td style="width: 80px;padding-top:8px;"><asp:Label ID="lab3" Visible="false"  Height="25" Text="LABEL3:" runat="server"></asp:Label></td>
-                                <td style="text-align:right;"><asp:TextBox ID="label3" Visible="false" placeholder=" Optional" onfocus="this.select()" runat="server" Width="200px"></asp:TextBox></td>
+                                <td style="text-align:right;"><asp:TextBox ID="l3" Visible="false" placeholder=" Optional" onfocus="this.select()" runat="server" Width="200px"></asp:TextBox></td>
                                 <td style="padding-left:5px;padding-top:4px;"><asp:ImageButton ID="edit3" Visible="false" ImageUrl="Content/edit.png" runat="server" Height="16px" Width="16px" OnClick="processRequest" /></td>
                                 <td style="padding-left:5px;padding-top:4px;"><asp:ImageButton ID="delete3" Visible="false" ImageUrl="Content/delete.png" runat="server" Height="18px" Width="18px" OnClientClick="return confirm('Are you sure you want to delete LABEL3?')" OnClick="processRequest" /></td>
                             </tr>
@@ -295,7 +294,7 @@
 
                             <tr >
                                 <td style="width: 80px;padding-top:8px;"><asp:Label ID="lab4" Visible="false"  Height="25" Text="LABEL4:" runat="server"></asp:Label></td>
-                                <td style="text-align:right;"><asp:TextBox ID="label4" Visible="false" placeholder=" Optional" onfocus="this.select()" runat="server" Width="200px"></asp:TextBox></td>
+                                <td style="text-align:right;"><asp:TextBox ID="l4" Visible="false" placeholder=" Optional" onfocus="this.select()" runat="server" Width="200px"></asp:TextBox></td>
                                 <td style="padding-left:5px;padding-top:4px;"><asp:ImageButton ID="edit4" Visible="false" ImageUrl="Content/edit.png" runat="server" Height="16px" Width="16px" OnClick="processRequest" /></td>
                                 <td style="padding-left:5px;padding-top:4px;"><asp:ImageButton ID="delete4" Visible="false" ImageUrl="Content/delete.png" runat="server" Height="18px" Width="18px" OnClientClick="return confirm('Are you sure you want to delete LABEL4?')" OnClick="processRequest" /></td>
                             </tr>
@@ -307,7 +306,7 @@
 
                             <tr>
                                 <td style="width:80px; padding-top:8px;"><asp:Label ID="lab5" Visible="false"  Height="25" Text="LABEL5:" runat="server"></asp:Label></td>
-                                <td style="text-align:right;"><asp:TextBox ID="label5" Visible="false" placeholder=" Optional" onfocus="this.select()" runat="server" Width="200px"></asp:TextBox></td>
+                                <td style="text-align:right;"><asp:TextBox ID="l5" Visible="false" placeholder=" Optional" onfocus="this.select()" runat="server" Width="200px"></asp:TextBox></td>
                                 <td style="padding-left:5px;padding-top:4px;"><asp:ImageButton ID="edit5" Visible="false" ImageUrl="Content/edit.png" runat="server" Height="16px" Width="16px" OnClick="processRequest" /></td>
                                 <td style="padding-left:5px;padding-top:4px;"><asp:ImageButton ID="delete5" Visible="false" ImageUrl="Content/delete.png" runat="server" Height="18px" Width="18px" OnClientClick="return confirm('Are you sure you want to delete LABEL5?')" OnClick="processRequest" /></td>
                             </tr>
@@ -331,7 +330,7 @@
                                 <td style="text-align:right;"><asp:TextBox ID="msgTextBox" placeholder=" Popup message if entry not valid. &nbsp;Required only if Regex is set" TextMode="MultiLine" onfocus="this.select()" runat="server" Height="60px" Width="221px"></asp:TextBox></td>
                             </tr>
                             <tr>
-                                <td colspan="2" style="text-align:right;"><asp:Button ID="lableControls" Text="+" Font-Size="Small" runat="server" Height="22px" Width="21px" OnClick="labelControls_Click" /></td>
+                                <td colspan="2" style="text-align:right;"><asp:ImageButton ID="labelValues" ImageUrl="Content/submit.png" runat="server" Height="22px" Width="21px" OnClick="labelValues_Click" /></td>
                             </tr>
                         </table>
 
